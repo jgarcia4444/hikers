@@ -59,7 +59,7 @@ body {
 .form-container {
     text-align: left;
     width: 84%;
-    margin: 0 auto;
+    margin: 0 auto 5% auto;
 }
 
 #show-form {
@@ -73,3 +73,30 @@ body {
 }
 
 
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+}
+
+.form-col-2 {
+    width: 50%;
+    margin-bottom: 1%;
+}
+
+.form-col-2 > input {
+    box-shadow: 2px 2px 7px black;
+    border: 1px solid black;
+    border-radius: 4px;
+}
+
+input[type='submit'] {
+    margin-top: 2%;
+    background-color: #2b580c;
+    color: #d9bf77;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 3px 3px 5px black;
+    border: 1px solid #d8ebb5;
+}
