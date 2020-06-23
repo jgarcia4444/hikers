@@ -14,11 +14,30 @@ body {
     background-color: white;
     width: 90%;
     margin: 0 auto;
-    border: 1px solid black;
-    border-radius: 10px;
-    box-shadow: 0 0 10px black;
 }
 
 #hikes-wrapper {
     width: 90%;
+    margin: 0 auto;
+}
+
+.hike {
+    padding: 2%;
+    text-align: left;
+    width: 80%;
+    margin: 10% auto;
+    background-color: #ddd;
+    box-shadow: 0 0 10px black;
+}
+
+.hike h3 {
+    margin-bottom: 3%;
+}
+
+.hike h4 {
+    margin-top: 2%;
+}
+
+.hike img {
+    box-shadow: 0 0 20px black;
 }
