@@ -16,9 +16,9 @@ body {
 #wrapper {
     background-color: #d8ebb5;
     width: 90%;
-    margin: 0 auto;
+    margin: 0 auto 5% auto;
     padding: 2%;
-    box-shadow: 0 0 10px black;
+    box-shadow: 4px 4px 10px black;
 }
 
 #hikes-wrapper {
@@ -31,9 +31,9 @@ body {
     padding: 2%;
     text-align: left;
     width: 80%;
-    margin: 10% auto;
+    margin: 0 auto 10% auto;
     background-color: #639a67;
-    box-shadow: 0 0 10px black;
+    box-shadow: 4px 4px 10px black;
 }
 
 .hike h3 {
@@ -54,4 +54,24 @@ body {
 
 .details ul li {
     list-style-type: none;
+}
+
+.form-container {
+    text-align: left;
+    width: 84%;
+    margin: 0 auto;
+}
+
+#show-form {
+    margin-bottom: 10px;
+    background-color: #2b580c;
+    color: #d9bf77;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 3px 3px 5px black;
+    border: 1px solid #d8ebb5;
+}
+
+#show-form:active {
+    box-shadow: none;
 }
