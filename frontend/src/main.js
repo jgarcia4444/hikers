@@ -77,13 +77,28 @@ function createHikeNode(hike) {
     return hikeNode
 }
 
+function shareHikeButtonHandling() {
+    const showFormButton = document.querySelector('#show-form')
+    showFormButton.addEventListener('click', (e) => {
+        const shareHikeForm = document.querySelector('#share-hike-form')
+        if (shareHikeForm.style.display === 'none') {
+            shareHikeForm.style.display = 'block'
+            showFormButton.innerText = 'Hide Form'
+        } else {
+            shareHikeForm.style.display = 'none'
+            showFormButton.innerText = 'Share Hike'
+        }
+    })
+    
+}
+ 
 document.addEventListener('DOMContentLoaded', (e) => {
     fetchHikes();
-    
+    shareHikeButtonHandling();
 })
 
 class Hike {
-    constructor(sharer_name, hike_name, img, city, state, duration, likes) {
+    constructor(sharer_name, hike_name, img, city, state, duration, likes=0) {
         this.sharer_name = sharer_name
         this.hike_name = hike_name
         this.img = img
