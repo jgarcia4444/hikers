@@ -5,4 +5,14 @@ class HikesController < ApplicationController
         render json: hikes
     end
 
+    def create
+        newHike = Hike.new(hikeParams)
+        
+    end
+
+    private
+        def hikeParams
+            params.require(:hike).permit(:sharer_name, :hike_name, :city, :state, :duration, :likes, :img)
+        end
+
 end

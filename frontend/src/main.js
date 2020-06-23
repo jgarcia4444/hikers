@@ -77,7 +77,7 @@ function createHikeNode(hike) {
     return hikeNode
 }
 
-function shareHikeButtonHandling() {
+function showFormButtonHandling() {
     const showFormButton = document.querySelector('#show-form')
     showFormButton.addEventListener('click', (e) => {
         const shareHikeForm = document.querySelector('#share-hike-form')
@@ -91,10 +91,33 @@ function shareHikeButtonHandling() {
     })
     
 }
+
+function sendHikeToDb(newHike) {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(newHike)
+    }
+    fetch (HIKES_URL, options)
+    .then(resp => console.log(resp))
+}
  
 document.addEventListener('DOMContentLoaded', (e) => {
     fetchHikes();
-    shareHikeButtonHandling();
+    showFormButtonHandling();
+    const formNode = document.querySelector('#share-hike-form')
+    formNode.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newHike = new Hike()
+        for (let i = 0; i < 6; i++) {
+            newHike[e.target[i].name] = e.target[i].value
+        }
+        sendHikeToDb(newHike)
+    })
+    
 })
 
 class Hike {
