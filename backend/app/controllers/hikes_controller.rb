@@ -2,7 +2,8 @@ class HikesController < ApplicationController
     
     def index
         hikes = Hike.all
-        render json: hikes
+        newest_hike_first = hikes.sort { |a, b| b.created_at <=> a.created_at }
+        render json: newest_hike_first
     end
 
     def create
