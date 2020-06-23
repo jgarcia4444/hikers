@@ -6,12 +6,11 @@ class HikesController < ApplicationController
     end
 
     def create
-        newHike = Hike.new(hikeParams)
-        
+        newHike = Hike.create(hike_params)
     end
 
     private
-        def hikeParams
+        def hike_params
             params.require(:hike).permit(:sharer_name, :hike_name, :city, :state, :duration, :likes, :img)
         end
 

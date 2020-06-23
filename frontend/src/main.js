@@ -102,7 +102,8 @@ function sendHikeToDb(newHike) {
         body: JSON.stringify(newHike)
     }
     fetch (HIKES_URL, options)
-    .then(resp => console.log(resp))
+    .then(resp => resp.json())
+    .then(json => console.log(json))
 }
  
 document.addEventListener('DOMContentLoaded', (e) => {
@@ -116,6 +117,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
             newHike[e.target[i].name] = e.target[i].value
         }
         sendHikeToDb(newHike)
+        location.reload()
     })
     
 })
