@@ -10,6 +10,12 @@ class HikesController < ApplicationController
         newHike = Hike.create(hike_params)
     end
 
+    def update
+        hike = Hike.find(params[:id])
+        likes_plus_one = hike.likes + 1
+        hike.update(likes: likes_plus_one)
+    end
+
     private
         def hike_params
             params.require(:hike).permit(:sharer_name, :hike_name, :city, :state, :duration, :likes, :img)

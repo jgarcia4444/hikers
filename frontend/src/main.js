@@ -15,6 +15,7 @@ function fetchHikes() {
 function parseJsonToHikes(hikesJSON) {
     const hikes = []
     for (const hikeJSON of hikesJSON) {
+        const id = hikeJSON['id']
         const sharer_name = hikeJSON['sharer_name']
         const hike_name = hikeJSON['hike_name']
         const city = hikeJSON['city']
@@ -22,7 +23,7 @@ function parseJsonToHikes(hikesJSON) {
         const duration = hikeJSON['duration']
         const img = hikeJSON['img']
         const likes = hikeJSON['likes']
-        const newHike = new Hike(sharer_name, hike_name, img, city, state, duration, likes)
+        const newHike = new Hike(id, sharer_name, hike_name, img, city, state, duration, likes)
         hikes.push(newHike)
     }
     return hikes
@@ -47,6 +48,10 @@ function createHikeNode(hike) {
     const hikeImageNode = document.createElement('img')
     hikeImageNode.setAttribute('src', hike.img)
     hikeImageNode.setAttribute('width', '100%')
+    hikeImageNode.setAttribute('data-hike-id', hike.id)
+    hikeImageNode.addEventListener('dblclick', (e) => {
+        handleImgDblClick(e)
+    })
     hikeNode.appendChild(hikeImageNode)
 
     const detailNode = document.createElement('div')
@@ -105,10 +110,8 @@ function sendHikeToDb(newHike) {
     .then(resp => resp.json())
     .then(json => console.log(json))
 }
- 
-document.addEventListener('DOMContentLoaded', (e) => {
-    fetchHikes();
-    showFormButtonHandling();
+
+function handleShareHikeForm() {
     const formNode = document.querySelector('#share-hike-form')
     formNode.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -119,11 +122,41 @@ document.addEventListener('DOMContentLoaded', (e) => {
         sendHikeToDb(newHike)
         location.reload()
     })
+}
+
+function handleImgDblClick(e) {
+    const detailsDiv = e.target.nextElementSibling
+    const likesLiNode = detailsDiv.querySelectorAll('ul>li')[3]
+    const likesNumber = parseInt(likesLiNode.innerText.split(' ')[1], 10)
+    likesLiNode.innerHTML = `<strong>Likes: </strong> ${likesNumber + 1}`
+    persistLikeToDb(e)
+}
+
+function persistLikeToDb(e) {
+    const dataSet = e.target.dataset
+    // console.log(e)
+    const options = {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(dataSet)
+    }
+    fetch(`${HIKES_URL}/${dataSet.hikeId}`, options)
+    .then(resp => console.log(resp))
     
+}
+ 
+document.addEventListener('DOMContentLoaded', (e) => {
+    fetchHikes();
+    showFormButtonHandling();
+    handleShareHikeForm();
 })
 
 class Hike {
-    constructor(sharer_name, hike_name, img, city, state, duration, likes=0) {
+    constructor(id, sharer_name, hike_name, img, city, state, duration, likes=0) {
+        this.id = id
         this.sharer_name = sharer_name
         this.hike_name = hike_name
         this.img = img
