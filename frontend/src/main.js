@@ -48,12 +48,14 @@ function createHikeNode(hike) {
     const hikeImageNode = document.createElement('img')
     hikeImageNode.setAttribute('src', hike.img)
     hikeImageNode.setAttribute('width', '100%')
-    hikeImageNode.setAttribute('data-hike-id', hike.id)
+    hikeImageNode.setAttribute('data-hike', hike.id)
     hikeImageNode.addEventListener('dblclick', (e) => {
         handleImgDblClick(e)
     })
     hikeNode.appendChild(hikeImageNode)
 
+    const hikeFooterNode = document.createElement('div')
+    hikeFooterNode.setAttribute('class', 'hike-footer-container')
     const detailNode = document.createElement('div')
     detailNode.setAttribute('class', 'details')
 
@@ -75,11 +77,32 @@ function createHikeNode(hike) {
     likesNode.innerHTML = `<strong>Likes:</strong> ${hike.likes}`
     detailListNode.appendChild(likesNode)
 
-    detailNode.appendChild(detailListNode)
-    hikeNode.appendChild(detailNode)
+    const commentNode = document.createElement('div')
+    commentNode.setAttribute('class', 'comments')
+    const commentHeader = document.createElement('h4')
+    commentHeader.innerText = 'Comments:'
+    commentNode.appendChild(commentHeader)
+    let comments = fetchComments(hike);
+    if (comments === undefined) {
+        const comment = document.createElement('p')
+        comment.innerText = "No comments yet..."
+        commentNode.appendChild(comment)
+    } else {
+        comments.forEach((comment) => {
+            commentUI = createComment(comment)
+        })
+    }
 
+    detailNode.appendChild(detailListNode)
+    hikeFooterNode.appendChild(detailNode)
+    hikeFooterNode.appendChild(commentNode)
+    hikeNode.appendChild(hikeFooterNode)
 
     return hikeNode
+}
+
+function fetchComments(hike) {
+
 }
 
 function showFormButtonHandling() {
@@ -134,7 +157,6 @@ function handleImgDblClick(e) {
 
 function persistLikeToDb(e) {
     const dataSet = e.target.dataset
-    // console.log(e)
     const options = {
         method: 'PATCH',
         headers: {
