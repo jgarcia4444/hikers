@@ -79,10 +79,11 @@ function createHikeNode(hike) {
 
     const commentNode = document.createElement('div')
     commentNode.setAttribute('class', 'comments')
+    // commentNode.setAttribute('data-hike-id', hike.id)
     const commentHeader = document.createElement('h4')
     commentHeader.innerText = 'Comments:'
     commentNode.appendChild(commentHeader)
-    fetchComments(hike);
+    fetchComments(hike, commentNode);
 
     detailNode.appendChild(detailListNode)
     hikeFooterNode.appendChild(detailNode)
@@ -92,12 +93,12 @@ function createHikeNode(hike) {
     return hikeNode
 }
 
-function fetchComments(hike) {
+function fetchComments(hike, commentNode) {
     fetch(`${HIKES_URL}/${hike.id}/comments`)
     .then(resp => resp.json())
     .then(json => {
         const comments = parseJSONToComments(json)
-        console.log(comments)
+        appendComments(comments, commentNode)
     })
 }
 
@@ -109,6 +110,16 @@ function parseJSONToComments(json) {
         }
         return newComment
     })
+}
+
+function appendComments(comments, commentNode) {
+    if (comments.length === 0) {
+        const messageNode = document.createElement('p')
+        messageNode.innerText = 'No comments yet...'
+        commentNode.appendChild(messageNode)
+    } else {
+
+    }
 }
 
 function showFormButtonHandling() {
