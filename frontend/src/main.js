@@ -48,7 +48,7 @@ function createHikeNode(hike) {
     const hikeImageNode = document.createElement('img')
     hikeImageNode.setAttribute('src', hike.img)
     hikeImageNode.setAttribute('width', '100%')
-    hikeImageNode.setAttribute('data-hike', hike.id)
+    hikeImageNode.setAttribute('data-hike-id', hike.id)
     hikeImageNode.addEventListener('dblclick', (e) => {
         handleImgDblClick(e)
     })
@@ -82,17 +82,7 @@ function createHikeNode(hike) {
     const commentHeader = document.createElement('h4')
     commentHeader.innerText = 'Comments:'
     commentNode.appendChild(commentHeader)
-    let comments = fetchComments(hike);
-    if (comments === undefined) {
-        const comment = document.createElement('p')
-        comment.innerText = "No comments yet..."
-        commentNode.appendChild(comment)
-    } else {
-        comments.forEach((comment) => {
-            commentUI = createComment(comment)
-            commentNode.appendChild(commentUI)
-        })
-    }
+    fetchComments(hike);
 
     detailNode.appendChild(detailListNode)
     hikeFooterNode.appendChild(detailNode)
@@ -103,7 +93,22 @@ function createHikeNode(hike) {
 }
 
 function fetchComments(hike) {
+    fetch(`${HIKES_URL}/${hike.id}/comments`)
+    .then(resp => resp.json())
+    .then(json => {
+        const comments = parseJSONToComments(json)
+        console.log(comments)
+    })
+}
 
+function parseJSONToComments(json) {
+    return json.map((commentObject) => {
+        const newComment = new Comment()
+        for (const objectKey in commentObject) {
+            newComment[objectKey] = commentObject[objectKey]
+        }
+        return newComment
+    })
 }
 
 function showFormButtonHandling() {
@@ -187,5 +192,14 @@ class Hike {
         this.state = state
         this.duration = duration
         this.likes = likes
+    }
+}
+
+class Comment {
+    constructor(id, name, content, hike_id) {
+        this.id = id
+        this.name = name
+        this.content = content
+        this.hike_id = hike_id
     }
 }
