@@ -90,6 +90,7 @@ function createHikeNode(hike) {
     } else {
         comments.forEach((comment) => {
             commentUI = createComment(comment)
+            commentNode.appendChild(commentUI)
         })
     }
 
