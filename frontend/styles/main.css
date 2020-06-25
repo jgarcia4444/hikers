@@ -100,3 +100,13 @@ input[type='submit'] {
     box-shadow: 3px 3px 5px black;
     border: 1px solid #d8ebb5;
 }
+
+.show-form-button {
+    margin-bottom: 10px;
+    background-color: #2b580c;
+    color: #d9bf77;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 3px 3px 5px black;
+    border: 1px solid #d8ebb5;
+}

@@ -122,6 +122,13 @@ function appendComments(comments, commentsNode) {
             const commentNode = createCommentNode(comment)
             commentsNode.appendChild(commentNode)
         })
+        const addCommentContainer = document.createElement('div')
+        addCommentContainer.setAttribute('class', 'add-comment-container')
+        const addCommentButton = document.createElement('button')
+        addCommentButton.innerText = 'Show Comment Form'
+        addCommentButton.setAttribute('class', 'show-form-button')
+        addCommentContainer.appendChild(addCommentButton)
+        commentsNode.appendChild(addCommentContainer)
     }
 }
 
@@ -132,7 +139,7 @@ function createCommentNode(comment) {
     commentContainerNode.appendChild(commentorNameNode)
     const commentContentNode = createCommentContentNode(comment)
     commentContainerNode.appendChild(commentContentNode)
-
+    
     return commentContainerNode
 }
 function createCommentorNameNode(comment) {
@@ -220,6 +227,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
 })
 
 class Hike {
+
     constructor(id, sharer_name, hike_name, img, city, state, duration, likes=0) {
         this.id = id
         this.sharer_name = sharer_name
@@ -230,13 +238,16 @@ class Hike {
         this.duration = duration
         this.likes = likes
     }
+
 }
 
 class Comment {
+
     constructor(id, name, content, hike_id) {
         this.id = id
         this.name = name
         this.content = content
         this.hike_id = hike_id
     }
+
 }
