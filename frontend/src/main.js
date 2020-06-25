@@ -77,28 +77,28 @@ function createHikeNode(hike) {
     likesNode.innerHTML = `<strong>Likes:</strong> ${hike.likes}`
     detailListNode.appendChild(likesNode)
 
-    const commentNode = document.createElement('div')
-    commentNode.setAttribute('class', 'comments')
+    const commentsNode = document.createElement('div')
+    commentsNode.setAttribute('class', 'comments')
     // commentNode.setAttribute('data-hike-id', hike.id)
-    const commentHeader = document.createElement('h4')
-    commentHeader.innerText = 'Comments:'
-    commentNode.appendChild(commentHeader)
-    fetchComments(hike, commentNode);
+    const commentsHeader = document.createElement('h4')
+    commentsHeader.innerText = 'Comments:'
+    commentsNode.appendChild(commentsHeader)
+    fetchComments(hike, commentsNode);
 
     detailNode.appendChild(detailListNode)
     hikeFooterNode.appendChild(detailNode)
-    hikeFooterNode.appendChild(commentNode)
+    hikeFooterNode.appendChild(commentsNode)
     hikeNode.appendChild(hikeFooterNode)
 
     return hikeNode
 }
 
-function fetchComments(hike, commentNode) {
+function fetchComments(hike, commentsNode) {
     fetch(`${HIKES_URL}/${hike.id}/comments`)
     .then(resp => resp.json())
     .then(json => {
         const comments = parseJSONToComments(json)
-        appendComments(comments, commentNode)
+        appendComments(comments, commentsNode)
     })
 }
 
@@ -112,14 +112,41 @@ function parseJSONToComments(json) {
     })
 }
 
-function appendComments(comments, commentNode) {
+function appendComments(comments, commentsNode) {
     if (comments.length === 0) {
         const messageNode = document.createElement('p')
         messageNode.innerText = 'No comments yet...'
-        commentNode.appendChild(messageNode)
+        commentsNode.appendChild(messageNode)
     } else {
-
+        comments.forEach(comment => {
+            const commentNode = createCommentNode(comment)
+            commentsNode.appendChild(commentNode)
+        })
     }
+}
+
+function createCommentNode(comment) {
+    const commentContainerNode = document.createElement('div')
+    commentContainerNode.setAttribute('class', 'comment-container')
+    const commentorNameNode = createCommentorNameNode(comment)
+    commentContainerNode.appendChild(commentorNameNode)
+    const commentContentNode = createCommentContentNode(comment)
+    commentContainerNode.appendChild(commentContentNode)
+
+    return commentContainerNode
+}
+function createCommentorNameNode(comment) {
+    const commentorNameNode = document.createElement('div')
+    commentorNameNode.setAttribute('class', 'commentor-name')
+    commentorNameNode.innerText = comment.name.charAt(0).toUpperCase() + comment.name.slice(1)
+    return commentorNameNode
+}
+
+function createCommentContentNode(comment) {
+    const contentNode = document.createElement('div')
+    contentNode.setAttribute('class', 'comment-content')
+    contentNode.innerText = comment.content
+    return contentNode
 }
 
 function showFormButtonHandling() {
@@ -183,7 +210,6 @@ function persistLikeToDb(e) {
         body: JSON.stringify(dataSet)
     }
     fetch(`${HIKES_URL}/${dataSet.hikeId}`, options)
-    .then(resp => console.log(resp))
     
 }
  
