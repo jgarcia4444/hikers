@@ -122,14 +122,75 @@ function appendComments(comments, commentsNode) {
             const commentNode = createCommentNode(comment)
             commentsNode.appendChild(commentNode)
         })
-        const addCommentContainer = document.createElement('div')
-        addCommentContainer.setAttribute('class', 'add-comment-container')
-        const addCommentButton = document.createElement('button')
-        addCommentButton.innerText = 'Show Comment Form'
-        addCommentButton.setAttribute('class', 'show-form-button')
-        addCommentContainer.appendChild(addCommentButton)
-        commentsNode.appendChild(addCommentContainer)
+        
     }
+    const addCommentContainer = document.createElement('div')
+    addCommentContainer.setAttribute('class', 'add-comment-container')
+    const addCommentButton = document.createElement('button')
+    addCommentButton.innerText = 'Show Comment Form'
+    addCommentButton.setAttribute('class', 'show-form-button')
+    const addCommentForm = createCommentForm(comments[0])
+    addCommentButton.addEventListener('click', (e) => {
+        toggleAddCommentForm()
+    })
+    addCommentContainer.appendChild(addCommentButton)
+    addCommentContainer.appendChild(addCommentForm)
+    commentsNode.appendChild(addCommentContainer)
+}
+
+function createCommentForm(comment) {
+
+    const formNode = document.createElement('form')
+    formNode.setAttribute('class', 'form-container')
+    const firstFormRowNode = document.createElement('div')
+    firstFormRowNode.setAttribute('class', 'form-row')
+
+    const firstColumnInFirstRow = document.createElement('div')
+    firstColumnInFirstRow.setAttribute('class', 'form-col-2')
+    const commentorNameLabel = document.createElement('label')
+    commentorNameLabel.innerText = 'Your Name:'
+    commentorNameLabel.setAttribute('for', 'commentor_name')
+    const commentorNameInput = document.createElement('input')
+    const nameInputAttributes = {'name': 'commentor_name', 'id': 'commentor_name', 'type': 'text'}
+    for (const objectKey in nameInputAttributes) {
+        commentorNameInput.setAttribute(objectKey, nameInputAttributes[objectKey])
+    }
+    firstColumnInFirstRow.appendChild(commentorNameLabel)
+    firstColumnInFirstRow.appendChild(commentorNameInput)
+    firstFormRowNode.appendChild(firstColumnInFirstRow)
+
+    const secondColumnInFirstRow = document.createElement('div')
+    secondColumnInFirstRow.setAttribute('class', 'form-col-2')
+    const commentorContentLabel = document.createElement('label')
+    commentorContentLabel.innerText = 'Comment:'
+    commentorContentLabel.setAttribute('for', 'commentor_content')
+    const commentorContentInput = document.createElement('textarea')
+    const commentInputAttributes = {'name': 'commentor_content', 'id': 'commentor_content', 'type': 'text'}
+    for (const objectKey in commentInputAttributes) {
+        commentorContentInput.setAttribute(objectKey, commentInputAttributes[objectKey])
+    }
+    secondColumnInFirstRow.appendChild(commentorContentLabel)
+    secondColumnInFirstRow.appendChild(commentorContentInput)
+    firstFormRowNode.appendChild(secondColumnInFirstRow)
+
+    formNode.appendChild(firstFormRowNode)
+
+    const secondFormRowNode = document.createElement('div')
+    secondFormRowNode.setAttribute('class', 'form-row')
+    const columnInSecondRow = document.createElement('div')
+    columnInSecondRow.setAttribute('class', 'form-col-2')
+    const submitCommentButton = document.createElement('input')
+    submitCommentButton.innerText = 'Submit'
+    submitCommentButton.setAttribute('type', 'submit')
+    columnInSecondRow.appendChild(submitCommentButton)
+    secondFormRowNode.appendChild(columnInSecondRow)
+    formNode.appendChild(secondFormRowNode)
+    return formNode
+
+}
+
+function toggleAddCommentForm() {
+
 }
 
 function createCommentNode(comment) {
