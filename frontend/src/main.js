@@ -131,7 +131,7 @@ function appendComments(comments, commentsNode) {
     addCommentButton.setAttribute('class', 'show-form-button')
     const addCommentForm = createCommentForm(comments[0])
     addCommentButton.addEventListener('click', (e) => {
-        toggleAddCommentForm()
+        toggleAddCommentForm(e, addCommentForm)
     })
     addCommentContainer.appendChild(addCommentButton)
     addCommentContainer.appendChild(addCommentForm)
@@ -141,7 +141,20 @@ function appendComments(comments, commentsNode) {
 function createCommentForm(comment) {
 
     const formNode = document.createElement('form')
-    formNode.setAttribute('class', 'form-container')
+    formNode.setAttribute('class', 'form-container add-comment-form')
+    formNode.style.display = 'none'
+    formNode.addEventListener('submit', (e) => {
+        e.preventDefault()
+        handleAddCommentForm(e, formNode)
+    })
+    if (comment !== undefined) {
+        const hiddenHikeIdInput = document.createElement('input')
+        hiddenHikeIdInput.setAttribute('type', 'hidden')
+        hiddenHikeIdInput.setAttribute('value', `${comment.hike_id}`)
+        hiddenHikeIdInput.setAttribute('name', 'hike_id')
+        formNode.appendChild(hiddenHikeIdInput)
+    }
+
     const firstFormRowNode = document.createElement('div')
     firstFormRowNode.setAttribute('class', 'form-row')
 
@@ -189,7 +202,20 @@ function createCommentForm(comment) {
 
 }
 
-function toggleAddCommentForm() {
+function toggleAddCommentForm(event, form) {
+    // console.log(event)
+    const showButton = event.target
+    const addCommentForm = form
+    if (addCommentForm.style.display === 'none') {
+        showButton.innerText = 'Hide Form'
+        addCommentForm.style.display = 'block'
+    } else {
+        showButton.innerText = 'Show Comment Form'
+        addCommentForm.style.display = 'none'
+    }
+}
+
+function handleAddCommentForm(event, form) {
 
 }
 
