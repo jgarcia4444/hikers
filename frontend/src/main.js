@@ -79,7 +79,7 @@ function createHikeNode(hike) {
 
     const commentsNode = document.createElement('div')
     commentsNode.setAttribute('class', 'comments')
-    // commentNode.setAttribute('data-hike-id', hike.id)
+    commentsNode.setAttribute('data-hike-id', hike.id)
     const commentsHeader = document.createElement('h4')
     commentsHeader.innerText = 'Comments:'
     commentsNode.appendChild(commentsHeader)
@@ -126,10 +126,11 @@ function appendComments(comments, commentsNode) {
     }
     const addCommentContainer = document.createElement('div')
     addCommentContainer.setAttribute('class', 'add-comment-container')
+    addCommentContainer.setAttribute('data-hike-id', `${commentsNode.dataset['hikeId']}`)
     const addCommentButton = document.createElement('button')
     addCommentButton.innerText = 'Show Comment Form'
     addCommentButton.setAttribute('class', 'show-form-button')
-    const addCommentForm = createCommentForm(comments[0])
+    const addCommentForm = createCommentForm(comments[0], commentsNode.dataset['hikeId'])
     addCommentButton.addEventListener('click', (e) => {
         toggleAddCommentForm(e, addCommentForm)
     })
@@ -138,7 +139,7 @@ function appendComments(comments, commentsNode) {
     commentsNode.appendChild(addCommentContainer)
 }
 
-function createCommentForm(comment) {
+function createCommentForm(comment, hikeId) {
 
     const formNode = document.createElement('form')
     formNode.setAttribute('class', 'form-container add-comment-form')
@@ -147,13 +148,13 @@ function createCommentForm(comment) {
         e.preventDefault()
         handleAddCommentForm(e, formNode)
     })
-    if (comment !== undefined) {
-        const hiddenHikeIdInput = document.createElement('input')
-        hiddenHikeIdInput.setAttribute('type', 'hidden')
-        hiddenHikeIdInput.setAttribute('value', `${comment.hike_id}`)
-        hiddenHikeIdInput.setAttribute('name', 'hike_id')
-        formNode.appendChild(hiddenHikeIdInput)
-    }
+    
+    const hiddenHikeIdInput = document.createElement('input')
+    hiddenHikeIdInput.setAttribute('type', 'hidden')
+    hiddenHikeIdInput.setAttribute('value', `${hikeId}`)
+    hiddenHikeIdInput.setAttribute('name', 'hike_id')
+    formNode.appendChild(hiddenHikeIdInput)
+
 
     const firstFormRowNode = document.createElement('div')
     firstFormRowNode.setAttribute('class', 'form-row')
