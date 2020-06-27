@@ -216,7 +216,30 @@ function toggleAddCommentForm(event, form) {
 }
 
 function handleAddCommentForm(event, form) {
+    console.log(event)
+    const nameInput = form.querySelector('#commentor_name')
+    const commentInput = form.querySelector('#commentor_content')
+    const hikeIDInput = form.querySelector('input[name="hike_id"]')
+    const newCommentAttributes = {'hike_id': `${hikeIDInput.value}`,'name': `${nameInput.value}`, 'content': `${commentInput.value}` }
+    const newComment = new Comment()
+    for (const objectKey in newCommentAttributes) {
+        newComment[objectKey] = newCommentAttributes[objectKey]
+    }
+    sendCommentToDb(newComment)
+    location.reload()
+}
 
+function sendCommentToDb(newComment) {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(newComment)
+    }
+    fetch(`${HIKES_URL}/${newComment.hike_id}/comments`, options)
+    .then(resp => console.log(resp))
 }
 
 function createCommentNode(comment) {
