@@ -119,7 +119,7 @@ function appendComments(comments, commentsNode) {
         commentsNode.appendChild(messageNode)
     } else {
         comments.forEach(comment => {
-            const commentNode = createCommentNode(comment)
+            const commentNode = comment.createCommentNode()
             commentsNode.appendChild(commentNode)
         })
         
@@ -130,7 +130,7 @@ function appendComments(comments, commentsNode) {
     const addCommentButton = document.createElement('button')
     addCommentButton.innerText = 'Show Comment Form'
     addCommentButton.setAttribute('class', 'show-form-button')
-    const addCommentForm = createCommentForm(comments[0], commentsNode.dataset['hikeId'])
+    const addCommentForm = createCommentForm(commentsNode.dataset['hikeId'])
     addCommentButton.addEventListener('click', (e) => {
         toggleAddCommentForm(e, addCommentForm)
     })
@@ -139,7 +139,7 @@ function appendComments(comments, commentsNode) {
     commentsNode.appendChild(addCommentContainer)
 }
 
-function createCommentForm(comment, hikeId) {
+function createCommentForm(hikeId) {
 
     const formNode = document.createElement('form')
     formNode.setAttribute('class', 'form-container add-comment-form')
@@ -215,6 +215,20 @@ function toggleAddCommentForm(event, form) {
         addCommentForm.style.display = 'none'
     }
 }
+function showFormButtonHandling() {
+    const showFormButton = document.querySelector('#show-form')
+    showFormButton.addEventListener('click', (e) => {
+        const shareHikeForm = document.querySelector('#share-hike-form')
+        if (shareHikeForm.style.display === 'none') {
+            shareHikeForm.style.display = 'block'
+            showFormButton.innerText = 'Hide Form'
+        } else {
+            shareHikeForm.style.display = 'none'
+            showFormButton.innerText = 'Share Hike'
+        }
+    })
+    
+}
 
 function handleAddCommentForm(event, form) {
     console.log(event)
@@ -241,45 +255,6 @@ function sendCommentToDb(newComment) {
     }
     fetch(`${HIKES_URL}/${newComment.hike_id}/comments`, options)
     .then(resp => console.log(resp))
-}
-
-function createCommentNode(comment) {
-    const commentContainerNode = document.createElement('div')
-    commentContainerNode.setAttribute('class', 'comment-container')
-    const commentorNameNode = createCommentorNameNode(comment)
-    commentContainerNode.appendChild(commentorNameNode)
-    const commentContentNode = createCommentContentNode(comment)
-    commentContainerNode.appendChild(commentContentNode)
-    
-    return commentContainerNode
-}
-function createCommentorNameNode(comment) {
-    const commentorNameNode = document.createElement('div')
-    commentorNameNode.setAttribute('class', 'commentor-name')
-    commentorNameNode.innerText = comment.name.charAt(0).toUpperCase() + comment.name.slice(1)
-    return commentorNameNode
-}
-
-function createCommentContentNode(comment) {
-    const contentNode = document.createElement('div')
-    contentNode.setAttribute('class', 'comment-content')
-    contentNode.innerText = comment.content
-    return contentNode
-}
-
-function showFormButtonHandling() {
-    const showFormButton = document.querySelector('#show-form')
-    showFormButton.addEventListener('click', (e) => {
-        const shareHikeForm = document.querySelector('#share-hike-form')
-        if (shareHikeForm.style.display === 'none') {
-            shareHikeForm.style.display = 'block'
-            showFormButton.innerText = 'Hide Form'
-        } else {
-            shareHikeForm.style.display = 'none'
-            showFormButton.innerText = 'Share Hike'
-        }
-    })
-    
 }
 
 function sendHikeToDb(newHike) {
@@ -359,6 +334,35 @@ class Comment {
         this.name = name
         this.content = content
         this.hike_id = hike_id
+    }
+
+    createCommentNode() {
+        const commentContainerNode = document.createElement('div')
+        commentContainerNode.setAttribute('class', 'comment-container')
+        const commentorNameNode = this.createCommentorNameNode()
+        commentContainerNode.appendChild(commentorNameNode)
+        const commentContentNode = this.createCommentContentNode()
+        commentContainerNode.appendChild(commentContentNode)
+        
+        return commentContainerNode
+    }
+
+    createCommentorNameNode() {
+        const commentorNameNode = document.createElement('div')
+        commentorNameNode.setAttribute('class', 'commentor-name')
+        commentorNameNode.innerText = this.capitalizeName() 
+        return commentorNameNode
+    }
+
+    capitalizeName() {
+        return this.name.charAt(0).toUpperCase() + this.name.slice(1)
+    }
+
+    createCommentContentNode() {
+        const contentNode = document.createElement('div')
+        contentNode.setAttribute('class', 'comment-content')
+        contentNode.innerText = this.content
+        return contentNode
     }
 
 }
