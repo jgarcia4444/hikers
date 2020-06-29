@@ -41,7 +41,7 @@ function createCommentForm(hikeId) {
     formNode.style.display = 'none'
     formNode.addEventListener('submit', (e) => {
         e.preventDefault()
-        handleAddCommentForm(e, formNode)
+        handleAddCommentForm(formNode)
     })
     const hiddenHikeIdInput = document.createElement('input')
     hiddenHikeIdInput.setAttribute('type', 'hidden')
@@ -114,8 +114,7 @@ function showFormButtonHandling() {
     })
     
 }
-function handleAddCommentForm(event, form) {
-    console.log(event)
+function handleAddCommentForm(form) {
     const nameInput = form.querySelector('#commentor_name')
     const commentInput = form.querySelector('#commentor_content')
     const hikeIDInput = form.querySelector('input[name="hike_id"]')
@@ -124,34 +123,11 @@ function handleAddCommentForm(event, form) {
     for (const objectKey in newCommentAttributes) {
         newComment[objectKey] = newCommentAttributes[objectKey]
     }
-    sendCommentToDb(newComment)
+    newComment.sendCommentToDb()
     location.reload()
 }
-function sendCommentToDb(newComment) {
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify(newComment)
-    }
-    fetch(`${HIKES_URL}/${newComment.hike_id}/comments`, options)
-    .then(resp => console.log(resp))
-}
-function sendHikeToDb(newHike) {
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify(newHike)
-    }
-    fetch (HIKES_URL, options)
-    .then(resp => resp.json())
-    .then(json => console.log(json))
-}
+
+
 function handleShareHikeForm() {
     const formNode = document.querySelector('#share-hike-form')
     formNode.addEventListener('submit', (e) => {
@@ -160,7 +136,7 @@ function handleShareHikeForm() {
         for (let i = 0; i < 6; i++) {
             newHike[e.target[i].name] = e.target[i].value
         }
-        sendHikeToDb(newHike)
+        newHike.sendHikeToDb()
         location.reload()
     })
 }
@@ -184,11 +160,11 @@ function persistLikeToDb(e) {
     fetch(`${HIKES_URL}/${dataSet.hikeId}`, options)  
 }
 function setupPageWithDataFromDB() {
-    // fetchHikes();
     Hike.allHikes()
     showFormButtonHandling();
     handleShareHikeForm();
 }
+
 
 
 document.addEventListener('DOMContentLoaded', (e) => {
@@ -204,6 +180,75 @@ class Hike {
         this.state = state
         this.duration = duration
         this.likes = likes
+    }
+
+    createCommentForm(hikeId) {
+        const formNode = document.createElement('form')
+        formNode.setAttribute('class', 'form-container add-comment-form')
+        formNode.style.display = 'none'
+        formNode.addEventListener('submit', (e) => {
+            e.preventDefault()
+            handleAddCommentForm(formNode)
+        })
+        const hiddenHikeIdInput = document.createElement('input')
+        hiddenHikeIdInput.setAttribute('type', 'hidden')
+        hiddenHikeIdInput.setAttribute('value', `${hikeId}`)
+        hiddenHikeIdInput.setAttribute('name', 'hike_id')
+        formNode.appendChild(hiddenHikeIdInput)
+        const firstFormRowNode = document.createElement('div')
+        firstFormRowNode.setAttribute('class', 'form-row')
+        const firstColumnInFirstRow = document.createElement('div')
+        firstColumnInFirstRow.setAttribute('class', 'form-col-2')
+        const commentorNameLabel = document.createElement('label')
+        commentorNameLabel.innerText = 'Your Name:'
+        commentorNameLabel.setAttribute('for', 'commentor_name')
+        const commentorNameInput = document.createElement('input')
+        const nameInputAttributes = {'name': 'commentor_name', 'id': 'commentor_name', 'type': 'text'}
+        for (const objectKey in nameInputAttributes) {
+            commentorNameInput.setAttribute(objectKey, nameInputAttributes[objectKey])
+        }
+        firstColumnInFirstRow.appendChild(commentorNameLabel)
+        firstColumnInFirstRow.appendChild(commentorNameInput)
+        firstFormRowNode.appendChild(firstColumnInFirstRow)
+        const secondColumnInFirstRow = document.createElement('div')
+        secondColumnInFirstRow.setAttribute('class', 'form-col-2')
+        const commentorContentLabel = document.createElement('label')
+        commentorContentLabel.innerText = 'Comment:'
+        commentorContentLabel.setAttribute('for', 'commentor_content')
+        const commentorContentInput = document.createElement('textarea')
+        const commentInputAttributes = {'name': 'commentor_content', 'id': 'commentor_content', 'type': 'text'}
+        for (const objectKey in commentInputAttributes) {
+            commentorContentInput.setAttribute(objectKey, commentInputAttributes[objectKey])
+        }
+        secondColumnInFirstRow.appendChild(commentorContentLabel)
+        secondColumnInFirstRow.appendChild(commentorContentInput)
+        firstFormRowNode.appendChild(secondColumnInFirstRow)
+        formNode.appendChild(firstFormRowNode)
+        const secondFormRowNode = document.createElement('div')
+        secondFormRowNode.setAttribute('class', 'form-row')
+        const columnInSecondRow = document.createElement('div')
+        columnInSecondRow.setAttribute('class', 'form-col-2')
+        const submitCommentButton = document.createElement('input')
+        submitCommentButton.innerText = 'Submit'
+        submitCommentButton.setAttribute('type', 'submit')
+        columnInSecondRow.appendChild(submitCommentButton)
+        secondFormRowNode.appendChild(columnInSecondRow)
+        formNode.appendChild(secondFormRowNode)
+        return formNode
+    }
+
+    sendHikeToDb() {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(this)
+        }
+        fetch (HIKES_URL, options)
+        .then(resp => resp.json())
+        .then(json => console.log(json))
     }
 
     static async allHikes() {
@@ -320,5 +365,18 @@ class Comment {
         contentNode.setAttribute('class', 'comment-content')
         contentNode.innerText = this.content
         return contentNode
+    }
+
+    sendCommentToDb() {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(this)
+        }
+        fetch(`${HIKES_URL}/${this.hike_id}/comments`, options)
+        .then(resp => console.log(resp))
     }
 }
