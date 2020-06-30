@@ -10,31 +10,6 @@ function parseJSONToComments(json) {
         return newComment
     })
 }
-function appendComments(comments, commentsNode) {
-    if (comments.length === 0) {
-        const messageNode = document.createElement('p')
-        messageNode.innerText = 'No comments yet...'
-        commentsNode.appendChild(messageNode)
-    } else {
-        comments.forEach(comment => {
-            const commentNode = comment.createCommentNode()
-            commentsNode.appendChild(commentNode)
-        }) 
-    }
-    const addCommentContainer = document.createElement('div')
-    addCommentContainer.setAttribute('class', 'add-comment-container')
-    addCommentContainer.setAttribute('data-hike-id', `${commentsNode.dataset['hikeId']}`)
-    const addCommentButton = document.createElement('button')
-    addCommentButton.innerText = 'Show Comment Form'
-    addCommentButton.setAttribute('class', 'show-form-button')
-    const addCommentForm = createCommentForm(commentsNode.dataset['hikeId'])
-    addCommentButton.addEventListener('click', (e) => {
-        toggleAddCommentForm(e, addCommentForm)
-    })
-    addCommentContainer.appendChild(addCommentButton)
-    addCommentContainer.appendChild(addCommentForm)
-    commentsNode.appendChild(addCommentContainer)
-}
 function createCommentForm(hikeId) {
     const formNode = document.createElement('form')
     formNode.setAttribute('class', 'form-container add-comment-form')
@@ -302,12 +277,11 @@ class Hike {
         detailListNode.appendChild(likesNode)
         const commentsNode = document.createElement('div')
         commentsNode.setAttribute('class', 'comments')
-        commentsNode.setAttribute('data-hike', this.id)
-        console.log(commentsNode)
+        commentsNode.setAttribute('data-hike', JSON.stringify(this))
         const commentsHeader = document.createElement('h4')
         commentsHeader.innerText = 'Comments:'
         commentsNode.appendChild(commentsHeader)
-        this.fetchComments(commentsNode);
+        this.fetchComments()
         detailNode.appendChild(detailListNode)
         hikeFooterNode.appendChild(detailNode)
         hikeFooterNode.appendChild(commentsNode)
@@ -315,13 +289,46 @@ class Hike {
         return hikeNode
     }
 
-    fetchComments(commentsNode) {
+    fetchComments() {
         fetch(`${HIKES_URL}/${this.id}/comments`)
         .then(resp => resp.json())
         .then(json => {
             const comments = parseJSONToComments(json)
-            appendComments(comments, commentsNode)
+            this.appendComments(comments)
         })
+    }
+
+    appendComments(comments) {
+        const commentsNodes = document.querySelectorAll('.comments')
+        let commentsNode; 
+        commentsNodes.forEach(node => {
+            if (node.dataset.hike == JSON.stringify(this)) {
+                commentsNode = node
+            }
+        })
+        if (comments.length === 0) {
+            const messageNode = document.createElement('p')
+            messageNode.innerText = 'No comments yet...'
+            commentsNode.appendChild(messageNode)
+        } else {
+            comments.forEach(comment => {
+                const commentNode = comment.createCommentNode()
+                commentsNode.appendChild(commentNode)
+            }) 
+        }
+        const addCommentContainer = document.createElement('div')
+        addCommentContainer.setAttribute('class', 'add-comment-container')
+        addCommentContainer.setAttribute('data-hike-id', `${commentsNode.dataset['hikeId']}`)
+        const addCommentButton = document.createElement('button')
+        addCommentButton.innerText = 'Show Comment Form'
+        addCommentButton.setAttribute('class', 'show-form-button')
+        const addCommentForm = createCommentForm(commentsNode.dataset['hikeId'])
+        addCommentButton.addEventListener('click', (e) => {
+            toggleAddCommentForm(e, addCommentForm)
+        })
+        addCommentContainer.appendChild(addCommentButton)
+        addCommentContainer.appendChild(addCommentForm)
+        commentsNode.appendChild(addCommentContainer)
     }
 
     static parseJsonToHikes(hikesJSON) {
