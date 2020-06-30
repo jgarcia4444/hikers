@@ -302,7 +302,8 @@ class Hike {
         detailListNode.appendChild(likesNode)
         const commentsNode = document.createElement('div')
         commentsNode.setAttribute('class', 'comments')
-        commentsNode.setAttribute('data-hike-id', this.id)
+        commentsNode.setAttribute('data-hike', this.id)
+        console.log(commentsNode)
         const commentsHeader = document.createElement('h4')
         commentsHeader.innerText = 'Comments:'
         commentsNode.appendChild(commentsHeader)
