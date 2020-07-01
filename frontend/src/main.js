@@ -10,60 +10,6 @@ function parseJSONToComments(json) {
         return newComment
     })
 }
-function createCommentForm(hikeId) {
-    const formNode = document.createElement('form')
-    formNode.setAttribute('class', 'form-container add-comment-form')
-    formNode.style.display = 'none'
-    formNode.addEventListener('submit', (e) => {
-        e.preventDefault()
-        handleAddCommentForm(formNode)
-    })
-    const hiddenHikeIdInput = document.createElement('input')
-    hiddenHikeIdInput.setAttribute('type', 'hidden')
-    hiddenHikeIdInput.setAttribute('value', `${hikeId}`)
-    hiddenHikeIdInput.setAttribute('name', 'hike_id')
-    formNode.appendChild(hiddenHikeIdInput)
-    const firstFormRowNode = document.createElement('div')
-    firstFormRowNode.setAttribute('class', 'form-row')
-    const firstColumnInFirstRow = document.createElement('div')
-    firstColumnInFirstRow.setAttribute('class', 'form-col-2')
-    const commentorNameLabel = document.createElement('label')
-    commentorNameLabel.innerText = 'Your Name:'
-    commentorNameLabel.setAttribute('for', 'commentor_name')
-    const commentorNameInput = document.createElement('input')
-    const nameInputAttributes = {'name': 'commentor_name', 'id': 'commentor_name', 'type': 'text'}
-    for (const objectKey in nameInputAttributes) {
-        commentorNameInput.setAttribute(objectKey, nameInputAttributes[objectKey])
-    }
-    firstColumnInFirstRow.appendChild(commentorNameLabel)
-    firstColumnInFirstRow.appendChild(commentorNameInput)
-    firstFormRowNode.appendChild(firstColumnInFirstRow)
-    const secondColumnInFirstRow = document.createElement('div')
-    secondColumnInFirstRow.setAttribute('class', 'form-col-2')
-    const commentorContentLabel = document.createElement('label')
-    commentorContentLabel.innerText = 'Comment:'
-    commentorContentLabel.setAttribute('for', 'commentor_content')
-    const commentorContentInput = document.createElement('textarea')
-    const commentInputAttributes = {'name': 'commentor_content', 'id': 'commentor_content', 'type': 'text'}
-    for (const objectKey in commentInputAttributes) {
-        commentorContentInput.setAttribute(objectKey, commentInputAttributes[objectKey])
-    }
-    secondColumnInFirstRow.appendChild(commentorContentLabel)
-    secondColumnInFirstRow.appendChild(commentorContentInput)
-    firstFormRowNode.appendChild(secondColumnInFirstRow)
-    formNode.appendChild(firstFormRowNode)
-    const secondFormRowNode = document.createElement('div')
-    secondFormRowNode.setAttribute('class', 'form-row')
-    const columnInSecondRow = document.createElement('div')
-    columnInSecondRow.setAttribute('class', 'form-col-2')
-    const submitCommentButton = document.createElement('input')
-    submitCommentButton.innerText = 'Submit'
-    submitCommentButton.setAttribute('type', 'submit')
-    columnInSecondRow.appendChild(submitCommentButton)
-    secondFormRowNode.appendChild(columnInSecondRow)
-    formNode.appendChild(secondFormRowNode)
-    return formNode
-}
 function toggleAddCommentForm(event, form) {
     const showButton = event.target
     const addCommentForm = form
@@ -101,8 +47,6 @@ function handleAddCommentForm(form) {
     newComment.sendCommentToDb()
     location.reload()
 }
-
-
 function handleShareHikeForm() {
     const formNode = document.querySelector('#share-hike-form')
     formNode.addEventListener('submit', (e) => {
@@ -139,9 +83,6 @@ function setupPageWithDataFromDB() {
     showFormButtonHandling();
     handleShareHikeForm();
 }
-
-
-
 document.addEventListener('DOMContentLoaded', (e) => {
     setupPageWithDataFromDB()
 })
@@ -157,7 +98,7 @@ class Hike {
         this.likes = likes
     }
 
-    createCommentForm(hikeId) {
+    createCommentForm() {
         const formNode = document.createElement('form')
         formNode.setAttribute('class', 'form-container add-comment-form')
         formNode.style.display = 'none'
@@ -167,7 +108,7 @@ class Hike {
         })
         const hiddenHikeIdInput = document.createElement('input')
         hiddenHikeIdInput.setAttribute('type', 'hidden')
-        hiddenHikeIdInput.setAttribute('value', `${hikeId}`)
+        hiddenHikeIdInput.setAttribute('value', `${this.id}`)
         hiddenHikeIdInput.setAttribute('name', 'hike_id')
         formNode.appendChild(hiddenHikeIdInput)
         const firstFormRowNode = document.createElement('div')
@@ -241,12 +182,7 @@ class Hike {
         });
     }
 
-    createHikeNode() {
-        const hikeNode = document.createElement('div')
-        hikeNode.setAttribute('class', 'hike')
-        const hikeNameNode = document.createElement('h3')
-        hikeNameNode.innerText = this.hike_name
-        hikeNode.appendChild(hikeNameNode)
+    createHikeImageNode() {
         const hikeImageNode = document.createElement('img')
         hikeImageNode.setAttribute('src', this.img)
         hikeImageNode.setAttribute('width', '100%')
@@ -254,6 +190,16 @@ class Hike {
         hikeImageNode.addEventListener('dblclick', (e) => {
             handleImgDblClick(e)
         })
+        return hikeImageNode
+    }
+
+    createHikeNode() {
+        const hikeNode = document.createElement('div')
+        hikeNode.setAttribute('class', 'hike')
+        const hikeNameNode = document.createElement('h3')
+        hikeNameNode.innerText = this.hike_name
+        hikeNode.appendChild(hikeNameNode)
+        const hikeImageNode = this.createHikeImageNode()
         hikeNode.appendChild(hikeImageNode)
         const hikeFooterNode = document.createElement('div')
         hikeFooterNode.setAttribute('class', 'hike-footer-container')
@@ -318,11 +264,11 @@ class Hike {
         }
         const addCommentContainer = document.createElement('div')
         addCommentContainer.setAttribute('class', 'add-comment-container')
-        addCommentContainer.setAttribute('data-hike-id', `${commentsNode.dataset['hikeId']}`)
+        addCommentContainer.setAttribute('data-hike-id', `${this.id}`)
         const addCommentButton = document.createElement('button')
         addCommentButton.innerText = 'Show Comment Form'
         addCommentButton.setAttribute('class', 'show-form-button')
-        const addCommentForm = createCommentForm(commentsNode.dataset['hikeId'])
+        const addCommentForm = this.createCommentForm()
         addCommentButton.addEventListener('click', (e) => {
             toggleAddCommentForm(e, addCommentForm)
         })
