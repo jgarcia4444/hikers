@@ -2,6 +2,13 @@
 body {
     margin: 0;
     background-color: #2b580c;
+    color: #d9bf77;
+}
+
+h1 {
+    font-family: Times;
+    letter-spacing: 4px;
+    text-shadow: 3px 3px 6px black;
 }
 
 #main {
@@ -12,13 +19,7 @@ body {
     font-family: sans-serif;
 }
 
-#wrapper {
-    background-color: #d8ebb5;
-    width: 90%;
-    margin: 0 auto 5% auto;
-    padding: 2%;
-    box-shadow: 4px 4px 10px black;
-}
+
 
 #hikes-wrapper {
     width: 90%;
@@ -46,7 +47,6 @@ body {
 }
 
 #show-form {
-    margin-bottom: 10px;
     background-color: #2b580c;
     color: #d9bf77;
     padding: 5px;
@@ -56,7 +56,7 @@ body {
 }
 
 .show-form-button {
-    margin-bottom: 10px;
+    margin: 10px 0;
     background-color: #2b580c;
     color: #d9bf77;
     padding: 5px;
@@ -67,12 +67,25 @@ body {
 
 .hike img {
     box-shadow: 0 0 20px black;
+    width: 100%;
+}
+
+.form-col-2 > input, textarea{
+    box-shadow: 2px 2px 7px black;
+    border: 1px solid black;
+    border-radius: 4px;
 }
 
 @media only screen and (min-width: 1199.98px) {
+
+    h1 {
+        font-size: 62px;
+    }
     
     .hike h3 {
-        margin-bottom: 3%;
+        margin-bottom: 2%;
+        font-size: 150%;
+        letter-spacing: 1px;
     }
     
     .hike h4 {
@@ -87,18 +100,21 @@ body {
         display: flex;
         flex-wrap: wrap;
         width: 100%;
-        justify-content: space-around;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .hike-footer-container {
+        margin-top: 5%;
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
     }
     
     .form-col-2 {
-        width: 50%;
+        width: 49%;
         margin: 1% auto;
-    }
-    
-    .form-col-2 > input, textarea{
-        box-shadow: 2px 2px 7px black;
-        border: 1px solid black;
-        border-radius: 4px;
     }
     
     input[type='submit'] {

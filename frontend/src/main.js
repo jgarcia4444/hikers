@@ -185,7 +185,6 @@ class Hike {
     createHikeImageNode() {
         const hikeImageNode = document.createElement('img')
         hikeImageNode.setAttribute('src', this.img)
-        hikeImageNode.setAttribute('width', '100%')
         hikeImageNode.setAttribute('data-hike-id', this.id)
         hikeImageNode.addEventListener('dblclick', (e) => {
             handleImgDblClick(e)
