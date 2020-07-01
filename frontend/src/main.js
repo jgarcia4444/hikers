@@ -207,19 +207,8 @@ class Hike {
         const detailHeader = document.createElement('h4')
         detailHeader.innerText = 'Details:'
         detailNode.appendChild(detailHeader)
-        const detailListNode = document.createElement('ul')
-        const hikersNameNode = document.createElement('li')
-        hikersNameNode.innerHTML = `<strong>Hikers Name:</strong> ${this.sharer_name}`
-        detailListNode.appendChild(hikersNameNode)
-        const durationNode = document.createElement('li')
-        durationNode.innerHTML = `<strong>Duration:</strong> ${this.duration}mins`
-        detailListNode.appendChild(durationNode)
-        const locationNode = document.createElement('li')
-        locationNode.innerHTML = `<strong>Location:</strong> ${this.city}, ${this.state}`
-        detailListNode.appendChild(locationNode)
-        const likesNode = document.createElement('li')
-        likesNode.innerHTML = `<strong>Likes:</strong> ${this.likes}`
-        detailListNode.appendChild(likesNode)
+        const detailListNode = document.createElement('div')
+        this.createDetailsParagraphNodes(detailListNode)
         const commentsNode = document.createElement('div')
         commentsNode.setAttribute('class', 'comments')
         commentsNode.setAttribute('data-hike', JSON.stringify(this))
@@ -232,6 +221,38 @@ class Hike {
         hikeFooterNode.appendChild(commentsNode)
         hikeNode.appendChild(hikeFooterNode)
         return hikeNode
+    }
+
+    createDetailsParagraphNodes(parentNode) {
+        let paragraphNodes = []
+        const paragraphsContent = { 
+            'sharer_name': 'Hikers Name',
+            'location': 'Location',
+            'duration': 'Duration',
+            'likes': 'Likes'  
+        }
+        for (const hikeContent in paragraphsContent) {
+            paragraphNodes.push(this.createParagraphNode(paragraphsContent[hikeContent]))
+        }
+        paragraphNodes.forEach(paragraph => parentNode.appendChild(paragraph))
+    }
+
+    createParagraphNode(label) {
+        const paragraphNode = document.createElement('p')
+        let hikeAttribute;
+        if (label === 'Hikers Name') {
+            hikeAttribute = 'sharer_name'
+        } else {
+            hikeAttribute = label.toLowerCase()
+        }
+        let content;
+        if (hikeAttribute === 'location') {
+            content = `${this.state}, ${this.city}`
+        } else {
+            content = `${this[hikeAttribute]} ${hikeAttribute === 'duration' ? 'mins' : ''}`
+        }
+        paragraphNode.innerHTML = `<strong>${label}</strong>: ${content}`
+        return paragraphNode
     }
 
     fetchComments() {
