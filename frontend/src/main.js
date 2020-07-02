@@ -292,10 +292,10 @@ class Hike {
         const addCommentButton = document.createElement('button')
         addCommentButton.innerText = 'Show Comment Form'
         addCommentButton.setAttribute('class', 'show-form-button')
-        const addCommentForm = this.createCommentForm()
         addCommentButton.addEventListener('click', (e) => {
             toggleAddCommentForm(e, addCommentForm)
         })
+        const addCommentForm = this.createCommentForm()
         addCommentContainer.appendChild(addCommentButton)
         addCommentContainer.appendChild(addCommentForm)
         commentsNode.appendChild(addCommentContainer)
