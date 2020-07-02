@@ -1,15 +1,7 @@
 const BASE_URL = 'http://localhost:3000'
 const HIKES_URL = BASE_URL + '/hikes'
 
-function parseJSONToComments(json) {
-    return json.map((commentObject) => {
-        const newComment = new Comment()
-        for (const objectKey in commentObject) {
-            newComment[objectKey] = commentObject[objectKey]
-        }
-        return newComment
-    })
-}
+
 function toggleAddCommentForm(event, form) {
     const showButton = event.target
     const addCommentForm = form
@@ -20,6 +12,18 @@ function toggleAddCommentForm(event, form) {
         showButton.innerText = 'Show Comment Form'
         addCommentForm.style.display = 'none'
     }
+}
+function handleAddCommentForm(form) {
+    const nameInput = form.querySelector('#commentor_name')
+    const commentInput = form.querySelector('#commentor_content')
+    const hikeIDInput = form.querySelector('input[name="hike_id"]')
+    const newCommentAttributes = {'hike_id': `${hikeIDInput.value}`,'name': `${nameInput.value}`, 'content': `${commentInput.value}` }
+    const newComment = new Comment()
+    for (const objectKey in newCommentAttributes) {
+        newComment[objectKey] = newCommentAttributes[objectKey]
+    }
+    newComment.sendCommentToDb()
+    location.reload()
 }
 function showFormButtonHandling() {
     const showFormButton = document.querySelector('#show-form')
@@ -35,18 +39,6 @@ function showFormButtonHandling() {
     })
     
 }
-function handleAddCommentForm(form) {
-    const nameInput = form.querySelector('#commentor_name')
-    const commentInput = form.querySelector('#commentor_content')
-    const hikeIDInput = form.querySelector('input[name="hike_id"]')
-    const newCommentAttributes = {'hike_id': `${hikeIDInput.value}`,'name': `${nameInput.value}`, 'content': `${commentInput.value}` }
-    const newComment = new Comment()
-    for (const objectKey in newCommentAttributes) {
-        newComment[objectKey] = newCommentAttributes[objectKey]
-    }
-    newComment.sendCommentToDb()
-    location.reload()
-}
 function handleShareHikeForm() {
     const formNode = document.querySelector('#share-hike-form')
     formNode.addEventListener('submit', (e) => {
@@ -59,32 +51,10 @@ function handleShareHikeForm() {
         location.reload()
     })
 }
-function handleImgDblClick(e) {
-    const detailsDiv = e.target.nextElementSibling
-    const likesLiNode = detailsDiv.querySelectorAll('ul>li')[3]
-    const likesNumber = parseInt(likesLiNode.innerText.split(' ')[1], 10)
-    likesLiNode.innerHTML = `<strong>Likes: </strong> ${likesNumber + 1}`
-    persistLikeToDb(e)
-}
-function persistLikeToDb(e) {
-    const dataSet = e.target.dataset
-    const options = {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify(dataSet)
-    }
-    fetch(`${HIKES_URL}/${dataSet.hikeId}`, options)  
-}
-function setupPageWithDataFromDB() {
+document.addEventListener('DOMContentLoaded', (e) => {
     Hike.allHikes()
     showFormButtonHandling();
     handleShareHikeForm();
-}
-document.addEventListener('DOMContentLoaded', (e) => {
-    setupPageWithDataFromDB()
 })
 class Hike {
     constructor(id, sharer_name, hike_name, img, city, state, duration, likes=0) {
@@ -182,16 +152,6 @@ class Hike {
         });
     }
 
-    createHikeImageNode() {
-        const hikeImageNode = document.createElement('img')
-        hikeImageNode.setAttribute('src', this.img)
-        hikeImageNode.setAttribute('data-hike-id', this.id)
-        hikeImageNode.addEventListener('dblclick', (e) => {
-            handleImgDblClick(e)
-        })
-        return hikeImageNode
-    }
-
     createHikeNode() {
         const hikeNode = document.createElement('div')
         hikeNode.setAttribute('class', 'hike')
@@ -223,6 +183,38 @@ class Hike {
         return hikeNode
     }
 
+    createHikeImageNode() {
+        const hikeImageNode = document.createElement('img')
+        hikeImageNode.setAttribute('src', this.img)
+        hikeImageNode.setAttribute('data-hike-id', this.id)
+        hikeImageNode.addEventListener('dblclick', (e) => {
+            console.log(this)
+            this.handleImgDblClick()
+        })
+        return hikeImageNode
+    }
+
+    handleImgDblClick() {
+        this.likes += 1
+        const likesSpanNode = document.querySelector(`#likes_${this.id}`)
+        likesSpanNode.innerText = `${this.likes}`
+        this.persistLikeToDb()
+    }
+
+    persistLikeToDb() {
+        const options = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(this)
+        }
+        fetch(`${HIKES_URL}/${this.id}`, options)  
+    }
+
+    
+
     createDetailsParagraphNodes(parentNode) {
         let paragraphNodes = []
         const paragraphsContent = { 
@@ -251,7 +243,7 @@ class Hike {
         } else {
             content = `${this[hikeAttribute]} ${hikeAttribute === 'duration' ? 'mins' : ''}`
         }
-        paragraphNode.innerHTML = `<strong>${label}</strong>: ${content}`
+        paragraphNode.innerHTML = `<strong>${label}:</strong> <span id="${hikeAttribute}_${this['id']}">${content}</span>`
         return paragraphNode
     }
 
@@ -259,7 +251,7 @@ class Hike {
         fetch(`${HIKES_URL}/${this.id}/comments`)
         .then(resp => resp.json())
         .then(json => {
-            const comments = parseJSONToComments(json)
+            const comments = Comment.parseJSONToComments(json)
             this.appendComments(comments)
         })
     }
@@ -340,7 +332,6 @@ class Comment {
         contentNode.innerText = this.content
         return contentNode
     }
-
     sendCommentToDb() {
         const options = {
             method: 'POST',
@@ -352,5 +343,14 @@ class Comment {
         }
         fetch(`${HIKES_URL}/${this.hike_id}/comments`, options)
         .then(resp => console.log(resp))
+    }
+    static parseJSONToComments(json) {
+        return json.map((commentObject) => {
+            const newComment = new Comment()
+            for (const objectKey in commentObject) {
+                newComment[objectKey] = commentObject[objectKey]
+            }
+            return newComment
+        })
     }
 }

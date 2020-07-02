@@ -12,8 +12,7 @@ class HikesController < ApplicationController
 
     def update
         hike = Hike.find(params[:id])
-        likes_plus_one = hike.likes + 1
-        hike.update(likes: likes_plus_one)
+        hike.update(likes: params[:hike][:likes])
     end
 
     private
