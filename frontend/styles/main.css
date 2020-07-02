@@ -27,6 +27,7 @@ h1 {
 }
 
 .hike {
+    border-radius: 4px;
     color: #d9bf77;
     padding: 2%;
     text-align: left;
@@ -66,7 +67,8 @@ h1 {
 }
 
 .hike img {
-    box-shadow: 0 0 20px black;
+    border-radius: 4px;
+    box-shadow: 4px 4px 8px black;
     width: 100%;
 }
 
