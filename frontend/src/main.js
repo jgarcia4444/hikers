@@ -208,25 +208,6 @@ class Hike {
         return hikeImageNode
     }
 
-    handleImgDblClick() {
-        this.likes += 1
-        const likesSpanNode = document.querySelector(`#likes_${this.id}`)
-        likesSpanNode.innerText = `${this.likes}`
-        this.persistLikeToDb()
-    }
-
-    persistLikeToDb() {
-        const options = {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(this)
-        }
-        fetch(`${HIKES_URL}/${this.id}`, options)  
-    }
-
     createDetailsParagraphNodes(parentNode) {
         let paragraphNodes = []
         const paragraphsContent = { 
@@ -251,7 +232,7 @@ class Hike {
         }
         let content;
         if (hikeAttribute === 'location') {
-            content = `${this.state}, ${this.city}`
+            content = `${this.city}, ${this.state}`
         } else {
             content = `${this[hikeAttribute]} ${hikeAttribute === 'duration' ? 'mins' : ''}`
         }
@@ -259,6 +240,24 @@ class Hike {
         return paragraphNode
     }
 
+    handleImgDblClick() {
+        this.likes += 1
+        const likesSpanNode = document.querySelector(`#likes_${this.id}`)
+        likesSpanNode.innerText = `${this.likes}`
+        this.persistLikeToDb()
+    }
+
+    persistLikeToDb() {
+        const options = {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(this)
+        }
+        fetch(`${HIKES_URL}/${this.id}`, options)  
+    }
     fetchComments() {
         fetch(`${HIKES_URL}/${this.id}/comments`)
         .then(resp => resp.json())
