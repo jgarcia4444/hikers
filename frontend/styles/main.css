@@ -93,9 +93,7 @@ h1 {
         font-size: 125%;
     }
     
-    .details {
-        width: 40%;
-    }
+    
     
     .form-row {
         display: flex;
@@ -106,12 +104,40 @@ h1 {
     }
 
     .hike-footer-container {
-        margin-top: 5%;
+        margin: 5% auto;
         display: flex;
         flex-wrap: wrap;
         width: 100%;
-        justify-content: center;
+        text-align: center;
     }
+    .details, .comments {
+        width: 48%;
+        text-align: left;
+        margin: 0 1%;
+    }
+
+    .comments {
+        height: 200px;
+        overflow: auto;
+        background-color: #2b580c;
+        box-shadow: 4px 4px 10px black;
+    }
+
+    .comment-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+
+    .commentor-name {
+        width: 25%;
+    }
+
+    .comment-content {
+        width: 70%;
+    }
+    
     
     .form-col-2 {
         width: 49%;

@@ -161,22 +161,36 @@ class Hike {
         const hikeImageNode = this.createHikeImageNode()
         hikeNode.appendChild(hikeImageNode)
         const hikeFooterNode = document.createElement('div')
+
+        
+
         hikeFooterNode.setAttribute('class', 'hike-footer-container')
-        const detailNode = document.createElement('div')
-        detailNode.setAttribute('class', 'details')
+
+        const labelRowNode = document.createElement('div')
+        labelRowNode.setAttribute('class', 'form-row')
         const detailHeader = document.createElement('h4')
         detailHeader.innerText = 'Details:'
-        detailNode.appendChild(detailHeader)
+        const commentsHeader = document.createElement('h4')
+        commentsHeader.innerText = 'Comments:'
+        const detailLabelColumn = document.createElement('div')
+        detailLabelColumn.setAttribute('class', 'form-col-2')
+        detailLabelColumn.appendChild(detailHeader)
+        const commentsLabelColumn = document.createElement('div')
+        commentsLabelColumn.setAttribute('class', 'form-col-2')
+        commentsLabelColumn.appendChild(commentsHeader)
+        labelRowNode.appendChild(detailLabelColumn)
+        labelRowNode.appendChild(commentsLabelColumn)
+
+        const detailNode = document.createElement('div')
+        detailNode.setAttribute('class', 'details')
         const detailListNode = document.createElement('div')
         this.createDetailsParagraphNodes(detailListNode)
         const commentsNode = document.createElement('div')
         commentsNode.setAttribute('class', 'comments')
         commentsNode.setAttribute('data-hike', JSON.stringify(this))
-        const commentsHeader = document.createElement('h4')
-        commentsHeader.innerText = 'Comments:'
-        commentsNode.appendChild(commentsHeader)
         this.fetchComments()
         detailNode.appendChild(detailListNode)
+        hikeFooterNode.appendChild(labelRowNode)
         hikeFooterNode.appendChild(detailNode)
         hikeFooterNode.appendChild(commentsNode)
         hikeNode.appendChild(hikeFooterNode)
@@ -212,8 +226,6 @@ class Hike {
         }
         fetch(`${HIKES_URL}/${this.id}`, options)  
     }
-
-    
 
     createDetailsParagraphNodes(parentNode) {
         let paragraphNodes = []
@@ -329,7 +341,7 @@ class Comment {
     createCommentContentNode() {
         const contentNode = document.createElement('div')
         contentNode.setAttribute('class', 'comment-content')
-        contentNode.innerText = this.content
+        contentNode.innerText = this.content.trim()
         return contentNode
     }
     sendCommentToDb() {
