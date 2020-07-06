@@ -152,6 +152,11 @@ h1 {
     float: right;
 }
 
+#signup-close-button:hover, #login-close-button:hover {
+    cursor: pointer;
+    color: #a68b44;
+}
+
 @media only screen and (min-width: 1199.98px) {
 
     h1 {

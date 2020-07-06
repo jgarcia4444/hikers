@@ -51,10 +51,7 @@ function handleShareHikeForm() {
         location.reload()
     })
 }
-document.addEventListener('DOMContentLoaded', (e) => {
-    Hike.allHikes()
-    showFormButtonHandling();
-    handleShareHikeForm();
+function handleSignupButtonClick() {
     const signupButton = document.querySelector('#signup-button')
     signupButton.onclick = (e) => {
         const modal = document.querySelector('.modal');
@@ -63,16 +60,13 @@ document.addEventListener('DOMContentLoaded', (e) => {
         signupForm.style.display = 'block';
         const closeButton = signupForm.querySelector('#signup-close-button')
         closeButton.onclick = (closeEvent) => {
-            const inputs = signupForm.querySelectorAll('input')
-            inputs.forEach(input => {
-                if (input.type !== 'submit') {
-                    input.value = '';
-                }
-            })
+            clearInputs(signupForm);
             signupForm.style.display = 'none'
             modal.style.display = 'none'
         } 
     }
+}
+function handleLoginButtonClick() {
     const loginButton = document.querySelector('#login-button')
     loginButton.onclick = (e) => {
         const modal = document.querySelector('.modal');
@@ -81,16 +75,29 @@ document.addEventListener('DOMContentLoaded', (e) => {
         loginForm.style.display = 'block';
         const closeButton = loginForm.querySelector('#login-close-button')
         closeButton.onclick = (closeEvent) => {
-            const inputs = loginForm.querySelectorAll('input')
-            inputs.forEach(input => {
-                if (input.type !== 'submit') {
-                    input.value = '';
-                }
-            })
+            clearInputs(loginForm)
             loginForm.style.display = 'none'
             modal.style.display = 'none'
         } 
     }
+}
+
+function clearInputs(form) {
+    const inputs = form.querySelectorAll('input')
+    inputs.forEach(input => {
+        if (input.type !== 'submit') {
+            input.value = '';
+        }
+    })
+}
+document.addEventListener('DOMContentLoaded', (e) => {
+    Hike.allHikes()
+    showFormButtonHandling();
+    handleShareHikeForm();
+    handleSignupButtonClick();
+    handleLoginButtonClick(); 
+    const signupForm = document.querySelector('#signup-form')
+    console.log(signupForm)
 })
 class Hike {
     constructor(id, sharer_name, hike_name, img, city, state, duration, likes=0) {
