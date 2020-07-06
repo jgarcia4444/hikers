@@ -55,6 +55,42 @@ document.addEventListener('DOMContentLoaded', (e) => {
     Hike.allHikes()
     showFormButtonHandling();
     handleShareHikeForm();
+    const signupButton = document.querySelector('#signup-button')
+    signupButton.onclick = (e) => {
+        const modal = document.querySelector('.modal');
+        const signupForm = modal.querySelector('.signup-content');
+        modal.style.display = 'block';
+        signupForm.style.display = 'block';
+        const closeButton = signupForm.querySelector('#signup-close-button')
+        closeButton.onclick = (closeEvent) => {
+            const inputs = signupForm.querySelectorAll('input')
+            inputs.forEach(input => {
+                if (input.type !== 'submit') {
+                    input.value = '';
+                }
+            })
+            signupForm.style.display = 'none'
+            modal.style.display = 'none'
+        } 
+    }
+    const loginButton = document.querySelector('#login-button')
+    loginButton.onclick = (e) => {
+        const modal = document.querySelector('.modal');
+        const loginForm = modal.querySelector('.login-content');
+        modal.style.display = 'block';
+        loginForm.style.display = 'block';
+        const closeButton = loginForm.querySelector('#login-close-button')
+        closeButton.onclick = (closeEvent) => {
+            const inputs = loginForm.querySelectorAll('input')
+            inputs.forEach(input => {
+                if (input.type !== 'submit') {
+                    input.value = '';
+                }
+            })
+            loginForm.style.display = 'none'
+            modal.style.display = 'none'
+        } 
+    }
 })
 class Hike {
     constructor(id, sharer_name, hike_name, img, city, state, duration, likes=0) {
@@ -367,9 +403,11 @@ class Comment {
 }
 
 class User {
-    constructor(id, firstName, lastName) {
+    constructor(id, firstName, lastName, email, password) {
         this.id = id
         this.firstName = firstName
         this.lastName = lastName
+        this.email = email
+        this.password = password
     }
 }
