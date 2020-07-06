@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   resources :hikes do
     resources :comments, only: [:index, :create]
   end
+  resources :users, only: [:show, :create]
 end

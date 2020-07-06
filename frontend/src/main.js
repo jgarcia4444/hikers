@@ -1,5 +1,6 @@
 const BASE_URL = 'http://localhost:3000'
 const HIKES_URL = BASE_URL + '/hikes'
+const USERS_URL = BASE_URL + '/users'
 
 
 function toggleAddCommentForm(event, form) {
@@ -97,7 +98,17 @@ document.addEventListener('DOMContentLoaded', (e) => {
     handleSignupButtonClick();
     handleLoginButtonClick(); 
     const signupForm = document.querySelector('#signup-form')
-    console.log(signupForm)
+    signupForm.onsubmit = (e) => {
+        e.preventDefault();
+        const inputs = signupForm.querySelectorAll('input')
+        const newUser = new User()
+        inputs.forEach(input => {
+            if (input.type !== 'submit') {
+                newUser[input.name] = input.value
+            }
+        })
+        newUser.sendSignupInfo();
+    }
 })
 class Hike {
     constructor(id, sharer_name, hike_name, img, city, state, duration, likes=0) {
@@ -410,11 +421,26 @@ class Comment {
 }
 
 class User {
-    constructor(id, firstName, lastName, email, password) {
+    constructor(id, first_name, last_name, email, password_digest) {
         this.id = id
-        this.firstName = firstName
-        this.lastName = lastName
+        this.first_name = first_name
+        this.last_name = last_name
         this.email = email
-        this.password = password
+        this.password_digest = password_digest
     }
+
+    sendSignupInfo() {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            
+            body: JSON.stringify(this)
+        }
+        console.log(JSON.stringify(this))
+        fetch(USERS_URL, options)
+    }
+
 }
