@@ -1,7 +1,7 @@
 const BASE_URL = 'http://localhost:3000'
 const HIKES_URL = BASE_URL + '/hikes'
 const USERS_URL = BASE_URL + '/users'
-
+var currentUser;
 
 function toggleAddCommentForm(event, form) {
     const showButton = event.target
@@ -91,12 +91,8 @@ function clearInputs(form) {
         }
     })
 }
-document.addEventListener('DOMContentLoaded', (e) => {
-    Hike.allHikes()
-    showFormButtonHandling();
-    handleShareHikeForm();
-    handleSignupButtonClick();
-    handleLoginButtonClick(); 
+
+function signupFormHandling() {
     const signupForm = document.querySelector('#signup-form')
     signupForm.onsubmit = (e) => {
         e.preventDefault();
@@ -108,7 +104,18 @@ document.addEventListener('DOMContentLoaded', (e) => {
             }
         })
         newUser.sendSignupInfo();
+        clearInputs(signupForm);
+        const modal = signupForm.parentNode.parentNode
+        modal.style.display = 'none';
     }
+}
+document.addEventListener('DOMContentLoaded', (e) => {
+    Hike.allHikes();
+    showFormButtonHandling();
+    handleShareHikeForm();
+    handleSignupButtonClick();
+    handleLoginButtonClick(); 
+    signupFormHandling();
 })
 class Hike {
     constructor(id, sharer_name, hike_name, img, city, state, duration, likes=0) {
@@ -421,15 +428,15 @@ class Comment {
 }
 
 class User {
-    constructor(id, first_name, last_name, email, password_digest) {
+    constructor(id, first_name, last_name, email, password) {
         this.id = id
         this.first_name = first_name
         this.last_name = last_name
         this.email = email
-        this.password_digest = password_digest
+        this.password = password
     }
 
-    sendSignupInfo() {
+    async sendSignupInfo() {
         const options = {
             method: 'POST',
             headers: {
@@ -439,8 +446,10 @@ class User {
             
             body: JSON.stringify(this)
         }
-        console.log(JSON.stringify(this))
-        fetch(USERS_URL, options)
+        const res = await fetch(USERS_URL, options)
+        const json = await res.json()
+        this.id = json['id']
+        currentUser = this
     }
 
 }
