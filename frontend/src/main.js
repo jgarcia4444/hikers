@@ -1,7 +1,7 @@
 const BASE_URL = 'http://localhost:3000'
 const HIKES_URL = BASE_URL + '/hikes'
 const USERS_URL = BASE_URL + '/users'
-var currentUser;
+
 
 function toggleAddCommentForm(event, form) {
     const showButton = event.target
@@ -106,6 +106,7 @@ function signupFormHandling() {
         newUser.sendSignupInfo();
         clearInputs(signupForm);
         const modal = signupForm.parentNode.parentNode
+        signupForm.parentNode.style.display = 'none'
         modal.style.display = 'none';
     }
 }
@@ -449,7 +450,6 @@ class User {
         const res = await fetch(USERS_URL, options)
         const json = await res.json()
         this.id = json['id']
-        currentUser = this
     }
 
 }

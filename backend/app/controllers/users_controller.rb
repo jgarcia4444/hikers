@@ -2,6 +2,9 @@ class UsersController < ApplicationController
     
     def create
         new_user = User.create(user_params)
+        if new_user 
+            session[:id] = new_user.id
+        end
         render json: new_user
     end
 
