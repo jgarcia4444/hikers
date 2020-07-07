@@ -397,6 +397,7 @@ class Comment {
         return commentorNameNode
     }
     capitalizeName() {
+        // const res = await fetch(`${BASE_URL}/current_user`)
         return this.name.charAt(0).toUpperCase() + this.name.slice(1)
     }
     createCommentContentNode() {
@@ -450,6 +451,15 @@ class User {
         const res = await fetch(USERS_URL, options)
         const json = await res.json()
         this.id = json['id']
+        this.createHiddenUserIDInput()
+    }
+
+    createHiddenUserIDInput() {
+        const userIDInput = document.createElement('input')
+        userIDInput.setAttribute('type', 'hidden')
+        userIDInput.setAttribute('value', `${this.id}`)
+        userIDInput.setAttribute('id', 'userID')
+        document.body.appendChild(userIDInput)
     }
 
 }
