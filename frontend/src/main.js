@@ -15,16 +15,16 @@ function toggleAddCommentForm(event, form) {
     }
 }
 function handleAddCommentForm(form) {
-    const nameInput = form.querySelector('#commentor_name')
+    const userID = document.querySelector('#userID')
     const commentInput = form.querySelector('#commentor_content')
     const hikeIDInput = form.querySelector('input[name="hike_id"]')
-    const newCommentAttributes = {'hike_id': `${hikeIDInput.value}`,'name': `${nameInput.value}`, 'content': `${commentInput.value}` }
+    const newCommentAttributes = {'hike_id': `${hikeIDInput.value}`,'user_id': `${userID.value}`, 'content': `${commentInput.value}` }
     const newComment = new Comment()
     for (const objectKey in newCommentAttributes) {
         newComment[objectKey] = newCommentAttributes[objectKey]
     }
     newComment.sendCommentToDb()
-    location.reload()
+    // location.reload()
 }
 function showFormButtonHandling() {
     const showFormButton = document.querySelector('#show-form')
@@ -374,8 +374,9 @@ class Hike {
 
 }
 class Comment {
-    constructor(id, name, content, hike_id) {
+    constructor(id, user_id, content, hike_id) {
         this.id = id
+        this.user_id = user_id
         this.name = name
         this.content = content
         this.hike_id = hike_id
@@ -394,11 +395,13 @@ class Comment {
         const commentorNameNode = document.createElement('div')
         commentorNameNode.setAttribute('class', 'commentor-name')
         commentorNameNode.innerText = this.capitalizeName() 
+        console.log(commentorNameNode)
         return commentorNameNode
     }
-    capitalizeName() {
-        // const res = await fetch(`${BASE_URL}/current_user`)
-        return this.name.charAt(0).toUpperCase() + this.name.slice(1)
+    async capitalizeName() {
+        const fetchedUser = await User.fetchUser(this)
+        return fetchedUser.first_name
+        // return this.name.charAt(0).toUpperCase() + this.name.slice(1)
     }
     createCommentContentNode() {
         const contentNode = document.createElement('div')
@@ -461,5 +464,18 @@ class User {
         userIDInput.setAttribute('id', 'userID')
         document.body.appendChild(userIDInput)
     }
+
+    static async fetchUser(comment) {
+        const res = await fetch(`${USERS_URL}/${comment.user_id}`);
+        const json = await res.json();
+        return await User.parseJSONToUser(json);
+    }
+    static async parseJSONToUser(json) {
+        const fetchedUser = new User()
+        for (const objectKey in json) {
+            fetchedUser[objectKey] = json[objectKey]
+        }
+        return fetchedUser;
+    }    
 
 }
