@@ -393,19 +393,24 @@ class Comment {
         const commentContainerNode = document.createElement('div')
         commentContainerNode.setAttribute('class', 'comment-container')
         const commentorNameNode = this.createCommentorNameNode()
+        console.log(commentorNameNode)
         commentContainerNode.appendChild(commentorNameNode)
         const commentContentNode = this.createCommentContentNode()
         commentContainerNode.appendChild(commentContentNode)
         return commentContainerNode
     }
-    async createCommentorNameNode() {
+    createCommentorNameNode() {
         const commentorNameNode = document.createElement('div')
         commentorNameNode.setAttribute('class', 'commentor-name')
-        const commentUser = await User.fetchUser(this)
-        const usersName = commentUser.capitalizeFullName()
-        commentorNameNode.innerText = usersName
+        let usersName;
+        User.fetchUser(this).then(user => {
+            usersName = user.capitalizeFullName()
+            commentorNameNode.innerText = usersName
+        })
         return commentorNameNode
     }
+
+    
 
     createCommentContentNode() {
         const contentNode = document.createElement('div')
@@ -470,11 +475,9 @@ class User {
     }
 
     static async fetchUser(comment) {
-        let fetchedUser;
         const res = await fetch(`${USERS_URL}/${comment.user_id}`)
         const json = await res.json()
-        fetchedUser = User.parseJSONToUser(json)
-        return fetchedUser;
+        return User.parseJSONToUser(json)
     }
 
     static parseJSONToUser(json) {
