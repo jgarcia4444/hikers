@@ -14,6 +14,7 @@ function toggleAddCommentForm(event, form) {
         addCommentForm.style.display = 'none'
     }
 }
+
 function handleAddCommentForm(form) {
     const userID = document.querySelector('#userID')
     const commentInput = form.querySelector('#commentor_content')
@@ -26,6 +27,7 @@ function handleAddCommentForm(form) {
     newComment.sendCommentToDb()
     // location.reload()
 }
+
 function showFormButtonHandling() {
     const showFormButton = document.querySelector('#show-form')
     showFormButton.addEventListener('click', (e) => {
@@ -40,6 +42,7 @@ function showFormButtonHandling() {
     })
     
 }
+
 function handleShareHikeForm() {
     const formNode = document.querySelector('#share-hike-form')
     formNode.addEventListener('submit', (e) => {
@@ -52,6 +55,7 @@ function handleShareHikeForm() {
         location.reload()
     })
 }
+
 function handleSignupButtonClick() {
     const signupButton = document.querySelector('#signup-button')
     signupButton.onclick = (e) => {
@@ -67,6 +71,7 @@ function handleSignupButtonClick() {
         } 
     }
 }
+
 function handleLoginButtonClick() {
     const loginButton = document.querySelector('#login-button')
     loginButton.onclick = (e) => {
@@ -110,6 +115,7 @@ function signupFormHandling() {
         modal.style.display = 'none';
     }
 }
+
 document.addEventListener('DOMContentLoaded', (e) => {
     Hike.allHikes();
     showFormButtonHandling();
@@ -118,6 +124,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
     handleLoginButtonClick(); 
     signupFormHandling();
 })
+
 class Hike {
     constructor(id, sharer_name, hike_name, img, city, state, duration, likes=0) {
         this.id = id
@@ -373,6 +380,7 @@ class Hike {
     }
 
 }
+
 class Comment {
     constructor(id, user_id, content, hike_id) {
         this.id = id
@@ -388,21 +396,17 @@ class Comment {
         commentContainerNode.appendChild(commentorNameNode)
         const commentContentNode = this.createCommentContentNode()
         commentContainerNode.appendChild(commentContentNode)
-        
         return commentContainerNode
     }
-    createCommentorNameNode() {
+    async createCommentorNameNode() {
         const commentorNameNode = document.createElement('div')
         commentorNameNode.setAttribute('class', 'commentor-name')
-        commentorNameNode.innerText = this.capitalizeName() 
-        console.log(commentorNameNode)
+        const commentUser = await User.fetchUser(this)
+        const usersName = commentUser.capitalizeFullName()
+        commentorNameNode.innerText = usersName
         return commentorNameNode
     }
-    async capitalizeName() {
-        const fetchedUser = await User.fetchUser(this)
-        return fetchedUser.first_name
-        // return this.name.charAt(0).toUpperCase() + this.name.slice(1)
-    }
+
     createCommentContentNode() {
         const contentNode = document.createElement('div')
         contentNode.setAttribute('class', 'comment-content')
@@ -466,16 +470,25 @@ class User {
     }
 
     static async fetchUser(comment) {
-        const res = await fetch(`${USERS_URL}/${comment.user_id}`);
-        const json = await res.json();
-        return await User.parseJSONToUser(json);
+        let fetchedUser;
+        const res = await fetch(`${USERS_URL}/${comment.user_id}`)
+        const json = await res.json()
+        fetchedUser = User.parseJSONToUser(json)
+        return fetchedUser;
     }
-    static async parseJSONToUser(json) {
+
+    static parseJSONToUser(json) {
         const fetchedUser = new User()
         for (const objectKey in json) {
             fetchedUser[objectKey] = json[objectKey]
         }
         return fetchedUser;
     }    
+
+    capitalizeFullName() {
+        const firstName = this.first_name
+        const lastName = this.last_name
+        return `${firstName.charAt(0).toUpperCase()}${firstName.slice(1)} ${lastName.charAt(0).toUpperCase()}${lastName.slice(1)}`
+    }
 
 }
