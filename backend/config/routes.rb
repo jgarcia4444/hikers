@@ -5,4 +5,7 @@ Rails.application.routes.draw do
     resources :comments, only: [:index, :create]
   end
   resources :users, only: [:show, :create]
+
+  get '/current_user', to: "session#current_user"
+
 end

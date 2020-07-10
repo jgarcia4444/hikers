@@ -117,6 +117,13 @@ function signupFormHandling() {
 }
 
 document.addEventListener('DOMContentLoaded', (e) => {
+    fetch(`${BASE_URL}/current_user`)
+        .then(res => console.log(res))
+        .then(json => {            
+            const user = User.parseJSONToUser(json)
+            console.log(user)
+            user.createHiddenUserIDInput();
+        })
     Hike.allHikes();
     showFormButtonHandling();
     handleShareHikeForm();
@@ -393,24 +400,20 @@ class Comment {
         const commentContainerNode = document.createElement('div')
         commentContainerNode.setAttribute('class', 'comment-container')
         const commentorNameNode = this.createCommentorNameNode()
-        console.log(commentorNameNode)
         commentContainerNode.appendChild(commentorNameNode)
         const commentContentNode = this.createCommentContentNode()
         commentContainerNode.appendChild(commentContentNode)
         return commentContainerNode
     }
+
     createCommentorNameNode() {
         const commentorNameNode = document.createElement('div')
         commentorNameNode.setAttribute('class', 'commentor-name')
-        let usersName;
         User.fetchUser(this).then(user => {
-            usersName = user.capitalizeFullName()
-            commentorNameNode.innerText = usersName
+            commentorNameNode.innerText = user.capitalizeFullName()
         })
         return commentorNameNode
     }
-
-    
 
     createCommentContentNode() {
         const contentNode = document.createElement('div')
@@ -418,6 +421,7 @@ class Comment {
         contentNode.innerText = this.content.trim()
         return contentNode
     }
+
     sendCommentToDb() {
         const options = {
             method: 'POST',
@@ -428,8 +432,8 @@ class Comment {
             body: JSON.stringify(this)
         }
         fetch(`${HIKES_URL}/${this.hike_id}/comments`, options)
-        .then(resp => console.log(resp))
     }
+
     static parseJSONToComments(json) {
         return json.map((commentObject) => {
             const newComment = new Comment()
@@ -439,9 +443,11 @@ class Comment {
             return newComment
         })
     }
+
 }
 
 class User {
+
     constructor(id, first_name, last_name, email, password) {
         this.id = id
         this.first_name = first_name

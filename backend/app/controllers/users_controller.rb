@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
     
     def create
+        session.clear
         new_user = User.create(user_params)
         session[:id] = new_user.id
         render json: new_user
