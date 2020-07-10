@@ -116,11 +116,48 @@ function signupFormHandling() {
     }
 }
 
+function loginFormHandling() {
+    const loginForm = document.querySelector('#login-form')
+    loginForm.onsubmit = (e => {
+        e.preventDefault();
+        const inputs = loginForm.querySelectorAll('input')
+        const possibleUser = new User()
+        inputs.forEach(input => {
+            if (input.type !== 'submit') {
+                possibleUser[input.name] = input.value
+            }
+        })
+        possibleUser.authenticate().then(res => {
+                clearInputs(loginForm)
+                if (res.ok) {
+                    const modal = loginForm.parentNode.parentNode
+                    loginForm.parentNode.style.display = 'none'
+                    modal.style.display = 'none';
+                    return res.json()
+                }
+            })
+            .then(json => {
+                const user = User.parseJSONToUser(json);
+                localStorage.setItem('id', `${user.id}`);
+                checkForLoggedInUser();
+            })
+    })
+    
+}
+
+function logoutButtonClicked() {
+    const logoutButton = document.querySelector('#logout-button')
+    logoutButton.onclick = (e => {
+        localStorage.clear();
+        location.reload();
+    })
+}
+
 function checkForLoggedInUser() {
     const signupButton = document.querySelector('#signup-button')
     const loginButton = document.querySelector('#login-button')
     const logoutButton = document.querySelector('#logout-button')
-    if (localStorage.getItem('id') !== null) {
+    if (localStorage.getItem('id') !== null && localStorage.getItem('id') !== "undefined") {
         signupButton.style.display = 'none'
         loginButton.style.display = 'none'
         logoutButton.style.display = 'inline-block'
@@ -139,6 +176,8 @@ document.addEventListener('DOMContentLoaded', (e) => {
     handleSignupButtonClick();
     handleLoginButtonClick(); 
     signupFormHandling();
+    loginFormHandling();
+    logoutButtonClicked();
 })
 
 class Hike {
@@ -480,13 +519,17 @@ class User {
         localStorage.setItem('id', `${this.id}`)
     }
 
-    // createHiddenUserIDInput() {
-    //     const userIDInput = document.createElement('input')
-    //     userIDInput.setAttribute('type', 'hidden')
-    //     userIDInput.setAttribute('value', `${this.id}`)
-    //     userIDInput.setAttribute('id', 'userID')
-    //     document.body.appendChild(userIDInput)
-    // }
+    authenticate() {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(this)
+        }
+        return fetch(`${BASE_URL}/login`, options)
+    }
 
     static async fetchUser(comment) {
         const res = await fetch(`${USERS_URL}/${comment.user_id}`)

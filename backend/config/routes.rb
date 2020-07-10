@@ -6,6 +6,6 @@ Rails.application.routes.draw do
   end
   resources :users, only: [:show, :create]
 
-  get '/current_user', to: "session#current_user"
+  post '/login', to: "session#login"
 
 end
