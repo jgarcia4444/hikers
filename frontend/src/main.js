@@ -16,16 +16,16 @@ function toggleAddCommentForm(event, form) {
 }
 
 function handleAddCommentForm(form) {
-    const userID = document.querySelector('#userID')
+    const userID = localStorage.getItem('id')
     const commentInput = form.querySelector('#commentor_content')
     const hikeIDInput = form.querySelector('input[name="hike_id"]')
-    const newCommentAttributes = {'hike_id': `${hikeIDInput.value}`,'user_id': `${userID.value}`, 'content': `${commentInput.value}` }
+    const newCommentAttributes = {'hike_id': `${hikeIDInput.value}`,'user_id': `${userID}`, 'content': `${commentInput.value}` }
     const newComment = new Comment()
     for (const objectKey in newCommentAttributes) {
         newComment[objectKey] = newCommentAttributes[objectKey]
     }
     newComment.sendCommentToDb()
-    // location.reload()
+    location.reload()
 }
 
 function showFormButtonHandling() {
@@ -116,14 +116,23 @@ function signupFormHandling() {
     }
 }
 
+function checkForLoggedInUser() {
+    const signupButton = document.querySelector('#signup-button')
+    const loginButton = document.querySelector('#login-button')
+    const logoutButton = document.querySelector('#logout-button')
+    if (localStorage.getItem('id') !== null) {
+        signupButton.style.display = 'none'
+        loginButton.style.display = 'none'
+        logoutButton.style.display = 'inline-block'
+    } else {
+        signupButton.style.display = 'inline-block'
+        loginButton.style.display = 'inline-block'
+        logoutButton.style.display = 'none'
+    }
+}
+
 document.addEventListener('DOMContentLoaded', (e) => {
-    fetch(`${BASE_URL}/current_user`)
-        .then(res => console.log(res))
-        .then(json => {            
-            const user = User.parseJSONToUser(json)
-            console.log(user)
-            user.createHiddenUserIDInput();
-        })
+    checkForLoggedInUser();
     Hike.allHikes();
     showFormButtonHandling();
     handleShareHikeForm();
@@ -463,22 +472,21 @@ class User {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            
             body: JSON.stringify(this)
         }
         const res = await fetch(USERS_URL, options)
         const json = await res.json()
         this.id = json['id']
-        this.createHiddenUserIDInput()
+        localStorage.setItem('id', `${this.id}`)
     }
 
-    createHiddenUserIDInput() {
-        const userIDInput = document.createElement('input')
-        userIDInput.setAttribute('type', 'hidden')
-        userIDInput.setAttribute('value', `${this.id}`)
-        userIDInput.setAttribute('id', 'userID')
-        document.body.appendChild(userIDInput)
-    }
+    // createHiddenUserIDInput() {
+    //     const userIDInput = document.createElement('input')
+    //     userIDInput.setAttribute('type', 'hidden')
+    //     userIDInput.setAttribute('value', `${this.id}`)
+    //     userIDInput.setAttribute('id', 'userID')
+    //     document.body.appendChild(userIDInput)
+    // }
 
     static async fetchUser(comment) {
         const res = await fetch(`${USERS_URL}/${comment.user_id}`)

@@ -7,8 +7,7 @@ class CommentsController < ApplicationController
     end
 
     def create
-        raise params.inspect
-        Comment.create(comment_params)
+        comment = Comment.create(comment_params)
     end
 
     private
