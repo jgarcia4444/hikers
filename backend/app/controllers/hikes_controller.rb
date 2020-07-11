@@ -8,6 +8,7 @@ class HikesController < ApplicationController
 
     def create
         newHike = Hike.create(hike_params)
+        render json: newHike
     end
 
     def update
@@ -17,7 +18,7 @@ class HikesController < ApplicationController
 
     private
         def hike_params
-            params.require(:hike).permit(:sharer_name, :hike_name, :city, :state, :duration, :likes, :img)
+            params.require(:hike).permit(:user_id, :hike_name, :city, :state, :duration, :likes, :img)
         end
 
 end

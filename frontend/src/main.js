@@ -1,7 +1,7 @@
 const BASE_URL = 'http://localhost:3000'
 const HIKES_URL = BASE_URL + '/hikes'
 const USERS_URL = BASE_URL + '/users'
-
+var currentUser;
 
 function toggleAddCommentForm(event, form) {
     const showButton = event.target
@@ -47,10 +47,14 @@ function handleShareHikeForm() {
     const formNode = document.querySelector('#share-hike-form')
     formNode.addEventListener('submit', (e) => {
         e.preventDefault();
+        const inputs = formNode.querySelectorAll('input')
         const newHike = new Hike()
-        for (let i = 0; i < 6; i++) {
-            newHike[e.target[i].name] = e.target[i].value
-        }
+        inputs.forEach(input => {
+            if (input.type !== 'submit') {
+                newHike[input.name] = input.value
+            }
+        })
+        newHike['user_id'] = localStorage.getItem('id')
         newHike.sendHikeToDb()
         location.reload()
     })
@@ -142,7 +146,6 @@ function loginFormHandling() {
                 checkForLoggedInUser();
             })
     })
-    
 }
 
 function logoutButtonClicked() {
@@ -165,6 +168,7 @@ function checkForLoggedInUser() {
         signupButton.style.display = 'inline-block'
         loginButton.style.display = 'inline-block'
         logoutButton.style.display = 'none'
+        currentUser = User.fetchUser(localStorage.getItem('id'))
     }
 }
 
@@ -181,9 +185,9 @@ document.addEventListener('DOMContentLoaded', (e) => {
 })
 
 class Hike {
-    constructor(id, sharer_name, hike_name, img, city, state, duration, likes=0) {
+    constructor(id, user_id, hike_name, img, city, state, duration, likes=0) {
         this.id = id
-        this.sharer_name = sharer_name
+        this.user_id = user_id
         this.hike_name = hike_name
         this.img = img
         this.city = city
@@ -207,19 +211,6 @@ class Hike {
         formNode.appendChild(hiddenHikeIdInput)
         const firstFormRowNode = document.createElement('div')
         firstFormRowNode.setAttribute('class', 'form-row')
-        const firstColumnInFirstRow = document.createElement('div')
-        firstColumnInFirstRow.setAttribute('class', 'form-col-2')
-        const commentorNameLabel = document.createElement('label')
-        commentorNameLabel.innerText = 'Your Name:'
-        commentorNameLabel.setAttribute('for', 'commentor_name')
-        const commentorNameInput = document.createElement('input')
-        const nameInputAttributes = {'name': 'commentor_name', 'id': 'commentor_name', 'type': 'text'}
-        for (const objectKey in nameInputAttributes) {
-            commentorNameInput.setAttribute(objectKey, nameInputAttributes[objectKey])
-        }
-        firstColumnInFirstRow.appendChild(commentorNameLabel)
-        firstColumnInFirstRow.appendChild(commentorNameInput)
-        firstFormRowNode.appendChild(firstColumnInFirstRow)
         const secondColumnInFirstRow = document.createElement('div')
         secondColumnInFirstRow.setAttribute('class', 'form-col-2')
         const commentorContentLabel = document.createElement('label')
@@ -335,7 +326,7 @@ class Hike {
     createDetailsParagraphNodes(parentNode) {
         let paragraphNodes = []
         const paragraphsContent = { 
-            'sharer_name': 'Hikers Name',
+            'user_id': 'Hikers Name',
             'location': 'Location',
             'duration': 'Duration',
             'likes': 'Likes'  
@@ -350,13 +341,15 @@ class Hike {
         const paragraphNode = document.createElement('p')
         let hikeAttribute;
         if (label === 'Hikers Name') {
-            hikeAttribute = 'sharer_name'
+            hikeAttribute = 'user_id'
         } else {
             hikeAttribute = label.toLowerCase()
         }
         let content;
         if (hikeAttribute === 'location') {
             content = `${this.city}, ${this.state}`
+        } else if (hikeAttribute === 'user_id') {
+            User.fetchUser(this.user_id).then(user => content = user.capitalizeFullName())
         } else {
             content = `${this[hikeAttribute]} ${hikeAttribute === 'duration' ? 'mins' : ''}`
         }
@@ -382,6 +375,7 @@ class Hike {
         }
         fetch(`${HIKES_URL}/${this.id}`, options)  
     }
+
     fetchComments() {
         fetch(`${HIKES_URL}/${this.id}/comments`)
         .then(resp => resp.json())
@@ -433,7 +427,6 @@ class Hike {
             return newHike
         })
     }
-
 }
 
 class Comment {
@@ -457,7 +450,7 @@ class Comment {
     createCommentorNameNode() {
         const commentorNameNode = document.createElement('div')
         commentorNameNode.setAttribute('class', 'commentor-name')
-        User.fetchUser(this).then(user => {
+        User.fetchUser(this.user_id).then(user => {
             commentorNameNode.innerText = user.capitalizeFullName()
         })
         return commentorNameNode
@@ -491,11 +484,9 @@ class Comment {
             return newComment
         })
     }
-
 }
 
 class User {
-
     constructor(id, first_name, last_name, email, password) {
         this.id = id
         this.first_name = first_name
@@ -531,10 +522,12 @@ class User {
         return fetch(`${BASE_URL}/login`, options)
     }
 
-    static async fetchUser(comment) {
-        const res = await fetch(`${USERS_URL}/${comment.user_id}`)
-        const json = await res.json()
-        return User.parseJSONToUser(json)
+    static async fetchUser(user_id) {
+        if (user_id !== null) {
+            const res = await fetch(`${USERS_URL}/${user_id}`)
+            const json = await res.json()
+            return User.parseJSONToUser(json)   
+        }
     }
 
     static parseJSONToUser(json) {
@@ -550,5 +543,4 @@ class User {
         const lastName = this.last_name
         return `${firstName.charAt(0).toUpperCase()}${firstName.slice(1)} ${lastName.charAt(0).toUpperCase()}${lastName.slice(1)}`
     }
-
 }
