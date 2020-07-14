@@ -459,8 +459,12 @@ class Comment {
         commentContainerNode.setAttribute('class', 'comment-container')
         const commentorNameNode = this.createCommentorNameNode()
         commentContainerNode.appendChild(commentorNameNode)
-        const commentContentNode = this.createCommentContentNode()
+        const commentContentNode = this.createCommentContentNode()  
         commentContainerNode.appendChild(commentContentNode)
+        const deleteCommentButton = this.createDeleteCommentButton()
+        if (deleteCommentButton !== null) {
+            commentContainerNode.appendChild(deleteCommentButton)
+        }
         return commentContainerNode
     }
 
@@ -478,6 +482,34 @@ class Comment {
         contentNode.setAttribute('class', 'comment-content')
         contentNode.innerText = this.content.trim()
         return contentNode
+    }
+
+    createDeleteCommentButton() {
+        if (this.user_id === parseInt(localStorage.getItem('id'), 10)) {
+            const button = document.createElement('button')
+            button.setAttribute('class', 'delete-comment')
+            button.innerText = 'Delete above comment.'
+            button.onclick = (e => {
+                const commentToBeDeleted = e.target.parentNode
+                this.deleteCommentFromDb()
+                commentToBeDeleted.remove();
+            })
+            return button
+        } else {
+            return null
+        }
+    }
+
+    deleteCommentFromDb() {
+        const options = {
+            method: 'DELETE',
+            content: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(this)
+        }
+        fetch(`${BASE_URL}/comments/${this.id}`, options)
     }
 
     sendCommentToDb() {
