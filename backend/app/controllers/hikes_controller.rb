@@ -13,7 +13,9 @@ class HikesController < ApplicationController
 
     def update
         hike = Hike.find(params[:id])
+        user_that_liked = User.find(params[:user_id])
         hike.update(likes: params[:hike][:likes])
+        LikedHike.create(hike_id: hike.id, user_id: user_that_liked.id)
     end
 
     private

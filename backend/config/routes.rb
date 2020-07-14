@@ -6,6 +6,10 @@ Rails.application.routes.draw do
   end
   resources :users, only: [:show, :create]
 
+  resources :hikes, only: [:show] do
+    resources :users, only: [:show]
+  end
+
   post '/login', to: "session#login"
 
 end

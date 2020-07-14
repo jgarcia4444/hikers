@@ -360,20 +360,35 @@ class Hike {
     }
 
     handleImgDblClick() {
-        this.likes += 1
-        const likesSpanNode = document.querySelector(`#likes_${this.id}`)
-        likesSpanNode.innerText = `${this.likes}`
-        this.persistLikeToDb()
+        const userID = localStorage.getItem('id')
+        if (userID) { 
+            let likable;
+            fetch(`${HIKES_URL}/${this.id}/users/${userID}`)
+                .then(res => res.json())
+                .then(json => {
+                    console.log(json)
+                    likable = json.likable
+                })
+            if (likable == true) {
+                this.likes += 1
+                const likesSpanNode = document.querySelector(`#likes_${this.id}`)
+                likesSpanNode.innerText = `${this.likes}`
+                this.persistLikeToDb(userID)
+            }
+        } 
     }
 
-    persistLikeToDb() {
+    persistLikeToDb(userID) {
         const options = {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(this)
+            body: JSON.stringify({
+                hike: this,
+                user_id: userID
+            })
         }
         fetch(`${HIKES_URL}/${this.id}`, options)  
     }
