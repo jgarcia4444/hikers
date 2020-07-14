@@ -355,16 +355,7 @@ class Hike {
                 content = `${this[hikeAttribute]} ${hikeAttribute === 'duration' ? 'mins' : ''}`
             }
             paragraphNode.innerHTML = `<strong>${label}:</strong> <span id="${hikeAttribute}_${this['id']}">${content}</span>`
-        }
-        
-        // if (hikeAttribute === 'location') {
-        //     content = `${this.city}, ${this.state}`
-        // } else if (hikeAttribute === 'user_id') {
-        //     User.fetchUser(this.user_id).then(user => content = user.capitalizeFullName())
-        // } else {
-        //     content = `${this[hikeAttribute]} ${hikeAttribute === 'duration' ? 'mins' : ''}`
-        // }
-        
+        }        
         return paragraphNode
     }
 
