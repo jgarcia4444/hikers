@@ -273,6 +273,12 @@ class Hike {
         const hikeNameNode = document.createElement('h3')
         hikeNameNode.innerText = this.hike_name
         hikeNode.appendChild(hikeNameNode)
+
+        if (this.user_id === parseInt(localStorage.getItem('id'), 10)) {
+            const deleteHikeButton = this.createDeleteHikeButton()
+            hikeNode.appendChild(deleteHikeButton)
+        }
+
         const hikeImageNode = this.createHikeImageNode()
         hikeNode.appendChild(hikeImageNode)
         const hikeFooterNode = document.createElement('div')
@@ -312,6 +318,18 @@ class Hike {
         return hikeNode
     }
 
+    createDeleteHikeButton() {
+        const button = document.createElement('button')
+        button.setAttribute('class', 'delete-hike')
+        button.innerText = 'Delete your shared hike.'
+        button.onclick = (e => {
+            const hikeNode = e.target.parentNode
+            this.deleteHike()
+            hikeNode.remove()
+        })
+        return button
+    }
+
     createHikeImageNode() {
         const hikeImageNode = document.createElement('img')
         hikeImageNode.setAttribute('src', this.img)
@@ -321,6 +339,18 @@ class Hike {
             this.handleImgDblClick()
         })
         return hikeImageNode
+    }
+
+    deleteHike() {
+        const options = {
+            method: 'DELETE',
+            content: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(this)
+        }
+        fetch(`${HIKES_URL}/${this.id}`, options)
     }
 
     createDetailsParagraphNodes(parentNode) {

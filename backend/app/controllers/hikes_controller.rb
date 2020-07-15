@@ -18,6 +18,11 @@ class HikesController < ApplicationController
         LikedHike.create(hike_id: hike.id, user_id: user_that_liked.id)
     end
 
+    def destroy
+        hike = Hike.find(params[:id])
+        hike.destroy
+    end
+
     private
         def hike_params
             params.require(:hike).permit(:user_id, :hike_name, :city, :state, :duration, :likes, :img)
