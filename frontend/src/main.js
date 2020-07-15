@@ -2,6 +2,10 @@ const BASE_URL = 'http://localhost:3000'
 const HIKES_URL = BASE_URL + '/hikes'
 const USERS_URL = BASE_URL + '/users'
 var currentUser;
+const states = ['AL','AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+'HI', 'ID', 'IL', 'IN','IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT',
+'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI',
+'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'];
 
 function toggleAddCommentForm(event, form) {
     const showButton = event.target
@@ -182,6 +186,13 @@ document.addEventListener('DOMContentLoaded', (e) => {
     signupFormHandling();
     loginFormHandling();
     logoutButtonClicked();
+    const stateSelectNode = document.querySelector('select#state')
+    states.forEach(state => {
+        const stateOption = document.createElement('option')
+        stateOption.setAttribute('value', state)
+        stateOption.innerText = state
+        stateSelectNode.appendChild(stateOption)
+    })
 })
 
 class Hike {
