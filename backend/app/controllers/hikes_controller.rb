@@ -23,6 +23,11 @@ class HikesController < ApplicationController
         hike.destroy
     end
 
+    def filter
+        hikes = Hike.where(state: params[:state])
+        render json: hikes
+    end
+
     private
         def hike_params
             params.require(:hike).permit(:user_id, :hike_name, :city, :state, :duration, :likes, :img)

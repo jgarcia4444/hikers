@@ -52,12 +52,14 @@ function handleShareHikeForm() {
     formNode.addEventListener('submit', (e) => {
         e.preventDefault();
         const inputs = formNode.querySelectorAll('input')
+        const selectInput = document.querySelector('select#state')
         const newHike = new Hike()
         inputs.forEach(input => {
             if (input.type !== 'submit') {
                 newHike[input.name] = input.value
-            }
+            } 
         })
+        newHike['state'] = selectInput.options[selectInput.selectedIndex].value
         newHike['user_id'] = localStorage.getItem('id')
         newHike.sendHikeToDb()
         location.reload()
@@ -176,6 +178,44 @@ function checkForLoggedInUser() {
     }
 }
 
+function addOptionsForStateSelection() {
+    const stateSelectNode = document.querySelector('select#state')
+    states.forEach(state => {
+        const stateOption = document.createElement('option')
+        stateOption.setAttribute('value', state)
+        stateOption.innerText = state
+        stateSelectNode.appendChild(stateOption)
+    })
+}
+
+function addOptionsForFilterByState() {
+    const filterSelectNode = document.querySelector('select#filter-by-state')
+    const allOption = document.createElement('option')
+    allOption.setAttribute('value', 'ALL')
+    allOption.innerText = 'ALL'
+    filterSelectNode.appendChild(allOption)
+    states.forEach(state => {
+        const stateOption = document.createElement('option')
+        stateOption.setAttribute('value', state)
+        stateOption.innerText = state
+        filterSelectNode.appendChild(stateOption)
+    })
+    filterSelectNode.onchange = (e => {
+        handleFilterByStateSelection(e)
+    })
+}
+
+function handleFilterByStateSelection(event) {
+    const selectedOptionValue = event.target[event.target.selectedIndex].value
+    if (selectedOptionValue === 'ALL') {
+        Hike.allHikes()
+    } else {
+        fetch(`${HIKES_URL}/filter/${selectedOptionValue}`)
+            .then(res => res.json())
+            .then(json => console.log(json))
+    }
+}
+
 document.addEventListener('DOMContentLoaded', (e) => {
     checkForLoggedInUser();
     Hike.allHikes();
@@ -186,13 +226,8 @@ document.addEventListener('DOMContentLoaded', (e) => {
     signupFormHandling();
     loginFormHandling();
     logoutButtonClicked();
-    const stateSelectNode = document.querySelector('select#state')
-    states.forEach(state => {
-        const stateOption = document.createElement('option')
-        stateOption.setAttribute('value', state)
-        stateOption.innerText = state
-        stateSelectNode.appendChild(stateOption)
-    })
+    addOptionsForStateSelection();
+    addOptionsForFilterByState();
 })
 
 class Hike {
