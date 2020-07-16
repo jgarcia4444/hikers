@@ -32,7 +32,7 @@ h1 {
     padding: 2%;
     text-align: left;
     width: 80%;
-    margin: 0 auto 10% auto;
+    margin: 2% auto 10% auto;
     background-color: #639a67;
     box-shadow: 4px 4px 10px black;
 }
@@ -135,6 +135,7 @@ h1 {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
+    border-radius: 10px;
     border: 1px solid #888;
     width: 50%; 
 }
@@ -144,6 +145,7 @@ h1 {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
+    border-radius: 10px;
     border: 1px solid #888;
     width: 50%; 
 }
@@ -155,6 +157,23 @@ h1 {
 #signup-close-button:hover, #login-close-button:hover {
     cursor: pointer;
     color: #a68b44;
+}
+
+.error-message {
+    padding: 10px;
+    background-color: white;
+    color: red;
+    border-radius: 10px;
+    box-shadow: 0 0 10px black;
+}
+
+#filter-by-state, #state {
+    /* background-color: #d9bf77; */
+    border-radius: 5px;
+    box-shadow: 0 0 10px black;
+}
+input, select {
+    margin-top: 5px;
 }
 
 @media only screen and (min-width: 1199.98px) {

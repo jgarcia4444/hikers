@@ -8,7 +8,12 @@ class HikesController < ApplicationController
 
     def create
         newHike = Hike.create(hike_params)
-        render json: newHike
+        if newHike.valid?
+           render json: newHike 
+        else
+            render json: { error: 'You must sign up or login to your account to share a hike.'}
+        end
+        
     end
 
     def update

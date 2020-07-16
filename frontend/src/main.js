@@ -62,7 +62,6 @@ function handleShareHikeForm() {
         newHike['state'] = selectInput.options[selectInput.selectedIndex].value
         newHike['user_id'] = localStorage.getItem('id')
         newHike.sendHikeToDb()
-        location.reload()
     })
 }
 
@@ -219,6 +218,17 @@ function handleFilterByStateSelection(event) {
     }
 }
 
+function errorHandlingShareHikeForm(jsonError) {
+    console.log(jsonError.error)
+    const shareHikeForm = document.querySelector('#share-hike-form');
+    console.log(shareHikeForm)
+    const errorMessage = jsonError.error;
+    const paragraphNode = document.createElement('p');
+    paragraphNode.innerText = errorMessage;
+    paragraphNode.setAttribute('class', 'error-message');
+    shareHikeForm.appendChild(paragraphNode)
+}
+
 document.addEventListener('DOMContentLoaded', (e) => {
     checkForLoggedInUser();
     Hike.allHikes();
@@ -298,7 +308,11 @@ class Hike {
         }
         fetch (HIKES_URL, options)
         .then(resp => resp.json())
-        .then(json => console.log(json))
+        .then(json => {
+            if (json.error) {
+                errorHandlingShareHikeForm(json)
+            } 
+        })
     }
 
     static async allHikes() {
