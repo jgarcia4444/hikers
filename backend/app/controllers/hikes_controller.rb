@@ -2,8 +2,8 @@ class HikesController < ApplicationController
     
     def index
         hikes = Hike.all
-        newest_hike_first = hikes.sort { |a, b| b.created_at <=> a.created_at }
-        render json: newest_hike_first
+        sorted_hikes = newest_hike_first(hikes)
+        render json: sorted_hikes
     end
 
     def create
@@ -25,10 +25,16 @@ class HikesController < ApplicationController
 
     def filter
         hikes = Hike.where(state: params[:state])
-        render json: hikes
+        sorted_hikes = newest_hike_first(hikes)
+        render json: sorted_hikes
     end
 
     private
+
+        def newest_hike_first(hikes)
+            hikes.sort { |a, b| b.created_at <=> a.created_at }
+        end
+
         def hike_params
             params.require(:hike).permit(:user_id, :hike_name, :city, :state, :duration, :likes, :img)
         end

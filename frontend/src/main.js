@@ -212,7 +212,10 @@ function handleFilterByStateSelection(event) {
     } else {
         fetch(`${HIKES_URL}/filter/${selectedOptionValue}`)
             .then(res => res.json())
-            .then(json => console.log(json))
+            .then(json => {
+                const hikes = Hike.parseJsonToHikes(json)
+                Hike.appendHikesToHikesWrapper(hikes)
+            })
     }
 }
 
@@ -307,6 +310,8 @@ class Hike {
 
     static appendHikesToHikesWrapper(hikes) {
         const hikesWrapper = document.querySelector('#hikes-wrapper')
+        const previousHikes = hikesWrapper.querySelectorAll('.hike')
+        previousHikes.forEach(hike => hike.remove())
         hikes.forEach(hike => {
             const hikeNode = hike.createHikeNode()
             hikesWrapper.appendChild(hikeNode)
